@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: verifica che l'utente autenticato sia presente in /admins
+    function isAdmin() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // /loads — lettura pubblica, scrittura solo admin
+    match /loads/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // /payments — lettura pubblica, scrittura solo admin
+    match /payments/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // /config — lettura pubblica, scrittura solo admin
+    match /config/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // /admins — lettura solo per utenti autenticati, scrittura solo admin
+    match /admins/{userId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+  }
+}

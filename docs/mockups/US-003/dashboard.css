@@ -1,0 +1,243 @@
+/* ============================================================
+   AcquaApp — Balance Cards (US-003)
+   ============================================================ */
+
+/* --- Balance Grid --- */
+.balance-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+}
+
+@media (max-width: 900px) {
+  .balance-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .balance-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+}
+
+/* --- Balance Card --- */
+.balance-card {
+  position: relative;
+  background: var(--surface-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  cursor: default;
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    background var(--transition-base);
+  overflow: hidden;
+  /* Subtle depth */
+  box-shadow: var(--shadow-card);
+}
+
+.balance-card::before {
+  /* Left accent stripe — the "ledger line" visual motif */
+  content: '';
+  position: absolute;
+  top: var(--space-5);
+  left: 0;
+  width: 4px;
+  height: calc(100% - var(--space-10));
+  border-radius: 0 3px 3px 0;
+  background: var(--card-accent, var(--color-zero));
+  transition: background var(--transition-base);
+}
+
+.balance-card::after {
+  /* Atmospheric glow behind the amount */
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--card-glow, transparent) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.balance-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+  background: var(--surface-card-hover);
+}
+
+/* State variants */
+.balance-card[data-state="debt-high"] {
+  --card-accent: var(--color-debt-strong);
+  --card-glow: rgba(239, 68, 68, 0.12);
+  --amount-color: var(--color-debt-strong);
+  --label-color: rgba(239, 68, 68, 0.7);
+}
+
+.balance-card[data-state="debt-mid"] {
+  --card-accent: var(--color-debt-mid);
+  --card-glow: rgba(249, 115, 22, 0.10);
+  --amount-color: var(--color-debt-mid);
+  --label-color: rgba(249, 115, 22, 0.7);
+}
+
+.balance-card[data-state="credit"] {
+  --card-accent: var(--color-credit);
+  --card-glow: rgba(34, 197, 94, 0.10);
+  --amount-color: var(--color-credit);
+  --label-color: rgba(34, 197, 94, 0.7);
+}
+
+.balance-card[data-state="zero"] {
+  --card-accent: var(--color-zero);
+  --card-glow: rgba(107, 114, 128, 0.08);
+  --amount-color: var(--color-zero);
+  --label-color: rgba(107, 114, 128, 0.5);
+}
+
+/* --- Card: skeleton loading state --- */
+.balance-card.is-loading .card-name,
+.balance-card.is-loading .card-amount,
+.balance-card.is-loading .card-status-label {
+  visibility: hidden;
+}
+
+.balance-card.is-loading::before {
+  background: rgba(103, 232, 249, 0.10);
+}
+
+/* --- Card internals --- */
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
+.card-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-overlay);
+  border: 1px solid var(--border-card);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.card-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--card-accent, var(--color-zero));
+  flex-shrink: 0;
+}
+
+.card-status-label {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--label-color, var(--color-zero));
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* --- Name --- */
+.card-name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-2);
+}
+
+/* --- Amount (dominant element) --- */
+.card-amount {
+  font-family: var(--font-mono);
+  font-size: var(--text-3xl);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--amount-color, var(--text-primary));
+  line-height: 1.1;
+  transition: color var(--transition-base);
+}
+
+.card-amount--large {
+  font-size: var(--text-4xl);
+}
+
+.card-amount__currency {
+  font-size: 0.55em;
+  font-weight: 400;
+  opacity: 0.7;
+  vertical-align: super;
+  margin-right: 1px;
+}
+
+/* --- Breakdown (subtle secondary info) --- */
+.card-breakdown {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.card-breakdown__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-breakdown__label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.card-breakdown__value {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* --- Card skeleton overlay --- */
+.card-skeleton {
+  position: absolute;
+  inset: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  pointer-events: none;
+}
+
+.balance-card:not(.is-loading) .card-skeleton {
+  display: none;
+}
+
+/* --- Animate amount in --- */
+.balance-card .card-amount {
+  animation: count-in 0.4s ease both;
+}
+
+@keyframes count-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

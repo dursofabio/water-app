@@ -1,1 +1,96 @@
-<p>Dashboard placeholder</p>
+<div class="app-shell">
+
+  <!-- Header -->
+  <header class="top-bar">
+    <div class="top-bar__inner">
+      <div class="brand">
+        <svg class="brand__icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0020 0C26 13.5 16 3 16 3z" fill="url(#dash-drop)" />
+          <defs>
+            <linearGradient id="dash-drop" x1="16" y1="3" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7dd3fc" />
+              <stop offset="100%" stop-color="#0e7490" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="brand__name">AcquaApp</span>
+      </div>
+      <div class="header-meta">
+        <span class="live-badge">
+          <span class="live-dot" aria-hidden="true"></span>
+          Aggiornato in tempo reale
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="page-content">
+
+    <!-- Section: saldi -->
+    <section class="section" aria-label="Saldi per persona">
+      <div class="section-header">
+        <h1 class="section-title">Saldi</h1>
+        <span class="section-subtitle">
+          Situazione aggiornata al
+          <time [dateTime]="now.toISOString()">{{ now | date:'d MMM yyyy, HH:mm' }}</time>
+        </span>
+      </div>
+
+      <div class="balance-grid" role="list" aria-label="Saldi delle persone">
+        @if (balancesResource.isLoading()) {
+          @for (persona of balancesResource.value(); track persona.id) {
+            <div role="listitem" aria-busy="true">
+              <app-balance-card [persona]="persona" />
+            </div>
+          }
+        } @else if (balancesResource.status() === 'error') {
+          <div class="resource-message" role="status">
+            <p>Non riesco ad aggiornare i saldi.</p>
+            <button type="button" class="resource-message__action" (click)="retryBalances()">
+              Riprova
+            </button>
+          </div>
+        } @else {
+          @for (persona of balancesResource.value(); track persona.id) {
+            <div role="listitem">
+              <app-balance-card [persona]="persona" />
+            </div>
+          }
+        }
+      </div>
+    </section>
+
+    <!-- Section: ultimi carichi (preview) -->
+    <section class="section section--secondary" aria-label="Ultimi carichi">
+      <div class="section-header">
+        <h2 class="section-title section-title--sm">Ultimi carichi</h2>
+        <span class="coming-soon-badge" aria-label="Funzionalità in arrivo">Prossimamente</span>
+      </div>
+      <div class="loads-preview" aria-hidden="true">
+        <div class="loads-row loads-row--skeleton">
+          <span class="loads-row__date skeleton-line" style="width:72px"></span>
+          <span class="loads-row__who skeleton-line" style="width:56px"></span>
+          <span class="loads-row__amount skeleton-line" style="width:48px"></span>
+        </div>
+        <div class="loads-row loads-row--skeleton">
+          <span class="loads-row__date skeleton-line" style="width:72px"></span>
+          <span class="loads-row__who skeleton-line" style="width:56px"></span>
+          <span class="loads-row__amount skeleton-line" style="width:48px"></span>
+        </div>
+        <div class="loads-row loads-row--skeleton">
+          <span class="loads-row__date skeleton-line" style="width:72px"></span>
+          <span class="loads-row__who skeleton-line" style="width:56px"></span>
+          <span class="loads-row__amount skeleton-line" style="width:48px"></span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p>AcquaApp &mdash; gestione spese idriche condivise</p>
+  </footer>
+
+</div>

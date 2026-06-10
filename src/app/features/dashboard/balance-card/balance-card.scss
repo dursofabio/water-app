@@ -1,0 +1,198 @@
+/* BalanceCard component styles — US-003 */
+/* Mirrors the design tokens and card styles from the mockup */
+
+:host {
+  display: contents;
+}
+
+/* --- Balance Card --- */
+.balance-card {
+  position: relative;
+  background: var(--surface-card, #0b1e28);
+  border: 1px solid var(--border-card, rgba(103, 232, 249, 0.14));
+  border-radius: var(--radius-xl, 24px);
+  padding: var(--space-6, 1.5rem);
+  cursor: default;
+  transition:
+    transform var(--transition-base, 220ms ease),
+    box-shadow var(--transition-base, 220ms ease),
+    background var(--transition-base, 220ms ease);
+  overflow: hidden;
+  box-shadow: var(--shadow-card, 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3));
+
+  /* Left accent stripe */
+  &::before {
+    content: '';
+    position: absolute;
+    top: var(--space-5, 1.25rem);
+    left: 0;
+    width: 4px;
+    height: calc(100% - var(--space-10, 2.5rem));
+    border-radius: 0 3px 3px 0;
+    background: var(--card-accent, var(--color-zero, #6b7280));
+    transition: background var(--transition-base, 220ms ease);
+  }
+
+  /* Atmospheric glow */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--card-glow, transparent) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card, 0 4px 24px rgba(0, 0, 0, 0.5)), var(--shadow-glow, 0 0 24px rgba(6, 182, 212, 0.12));
+    background: var(--surface-card-hover, #0e2737);
+  }
+
+  /* State variants */
+  &[data-state='debt-high'] {
+    --card-accent: var(--color-debt-strong, #ef4444);
+    --card-glow: rgba(239, 68, 68, 0.12);
+    --amount-color: var(--color-debt-strong, #ef4444);
+    --label-color: rgba(239, 68, 68, 0.7);
+  }
+
+  &[data-state='debt-mid'] {
+    --card-accent: var(--color-debt-mid, #f97316);
+    --card-glow: rgba(249, 115, 22, 0.1);
+    --amount-color: var(--color-debt-mid, #f97316);
+    --label-color: rgba(249, 115, 22, 0.7);
+  }
+
+  &[data-state='credit'] {
+    --card-accent: var(--color-credit, #22c55e);
+    --card-glow: rgba(34, 197, 94, 0.1);
+    --amount-color: var(--color-credit, #22c55e);
+    --label-color: rgba(34, 197, 94, 0.7);
+  }
+
+  &[data-state='zero'] {
+    --card-accent: var(--color-zero, #6b7280);
+    --card-glow: rgba(107, 114, 128, 0.08);
+    --amount-color: var(--color-zero, #6b7280);
+    --label-color: rgba(107, 114, 128, 0.5);
+  }
+}
+
+/* --- Card header --- */
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-5, 1.25rem);
+}
+
+.card-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-overlay, rgba(6, 176, 212, 0.06));
+  border: 1px solid var(--border-card, rgba(103, 232, 249, 0.14));
+  font-size: var(--text-base, 1rem);
+  font-weight: 600;
+  color: var(--text-secondary, #7fbfcc);
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.card-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--card-accent, var(--color-zero, #6b7280));
+  flex-shrink: 0;
+}
+
+.card-status-label {
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 500;
+  color: var(--label-color, var(--color-zero, #6b7280));
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* --- Name --- */
+.card-name {
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 500;
+  color: var(--text-secondary, #7fbfcc);
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-2, 0.5rem);
+}
+
+/* --- Amount --- */
+.card-amount {
+  font-family: var(--font-mono, 'DM Mono', 'Courier New', monospace);
+  font-size: var(--text-3xl, 2.25rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--amount-color, var(--text-primary, #e0f6fa));
+  line-height: 1.1;
+  transition: color var(--transition-base, 220ms ease);
+  animation: count-in 0.4s ease both;
+}
+
+.card-amount__currency {
+  font-size: 0.55em;
+  font-weight: 400;
+  opacity: 0.7;
+  vertical-align: super;
+  margin-right: 1px;
+}
+
+/* --- Breakdown --- */
+.card-breakdown {
+  margin-top: var(--space-5, 1.25rem);
+  padding-top: var(--space-4, 1rem);
+  border-top: 1px solid var(--border-subtle, rgba(103, 232, 249, 0.1));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+}
+
+.card-breakdown__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-breakdown__label {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--text-muted, #4a7e8a);
+}
+
+.card-breakdown__value {
+  font-family: var(--font-mono, 'DM Mono', 'Courier New', monospace);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--text-secondary, #7fbfcc);
+  font-weight: 500;
+}
+
+@keyframes count-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
