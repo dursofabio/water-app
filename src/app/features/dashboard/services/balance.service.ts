@@ -4,12 +4,12 @@ import { Firestore, collection, onSnapshot } from '@angular/fire/firestore';
 import { Observable, combineLatest, map } from 'rxjs';
 
 import {
-  Load,
   Payment,
   Person,
   PersonBalance,
   computeStatus,
 } from '../models/balance.model';
+import { LoadDocument, getLoadAmountForPerson } from '../models/load.model';
 
 export const EMPTY_BALANCES: PersonBalance[] = [];
 
@@ -29,7 +29,7 @@ export class BalanceService {
 
   private readonly people$ = this.readCollection<Person>('people', { idField: 'id' });
 
-  private readonly loads$ = this.readCollection<Load>('loads');
+  private readonly loads$ = this.readCollection<LoadDocument>('loads');
 
   private readonly payments$ = this.readCollection<Payment>('payments');
 
@@ -43,8 +43,7 @@ export class BalanceService {
       map(([people, loads, payments]) =>
         people.map((person) => {
           const loadsTotal = loads
-            .filter((l) => l.personId === person.id)
-            .reduce((sum, l) => sum + (l.amount ?? 0), 0);
+            .reduce((sum, load) => sum + getLoadAmountForPerson(load, person.id), 0);
 
           const paymentsTotal = payments
             .filter((p) => p.personId === person.id)

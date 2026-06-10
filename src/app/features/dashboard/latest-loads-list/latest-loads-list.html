@@ -1,0 +1,70 @@
+<section class="loads-section" aria-label="Ultimi carichi">
+  <div class="section-header section-header--loads">
+    <div>
+      <h2 class="section-title section-title--sm">Ultimi carichi</h2>
+      <span class="section-subtitle">Gli ultimi 10 movimenti con quote e prezzi snapshot.</span>
+    </div>
+    @if (!loadsResource().isLoading() && loadsResource().status() !== 'error') {
+      <span class="count-badge">{{ loadCountLabel() }}</span>
+    }
+  </div>
+
+  @if (loadsResource().isLoading()) {
+    <div class="loads-state" role="status" aria-live="polite" aria-busy="true">
+      <span class="state-title">Caricamento ultimi carichi</span>
+      <span class="state-detail">Recupero movimenti e snapshot quote.</span>
+    </div>
+  } @else if (loadsResource().status() === 'error') {
+    <div class="loads-state loads-state--error" role="alert">
+      <span class="state-title">Non riesco a caricare gli ultimi carichi.</span>
+      <span class="state-detail">{{ errorMessage() }}</span>
+      <button type="button" class="state-action" (click)="retryLoads()">Riprova</button>
+    </div>
+  } @else if (latestLoads().length === 0) {
+    <div class="loads-state" role="status">
+      <span class="state-title">Nessun carico registrato.</span>
+      <span class="state-detail">Quando verranno aggiunti, compariranno qui con il dettaglio quote.</span>
+    </div>
+  } @else {
+    <div class="loads-list" role="list" aria-label="Ultimi carichi">
+      @for (load of latestLoads(); track trackLoad($index, load)) {
+        <article class="load-row" [class.is-open]="isExpanded(load.id)" role="listitem">
+          <button
+            class="load-summary"
+            type="button"
+            [attr.aria-expanded]="isExpanded(load.id)"
+            [attr.aria-controls]="detailId(load)"
+            (click)="toggleLoad(load.id)"
+          >
+            <time class="summary-date" [dateTime]="isoDate(load)">
+              {{ formattedDate(load) }}
+            </time>
+            <span class="summary-main">
+              <strong>Carico cisterna</strong>
+              <small>Pagato da {{ load.paidByName }}</small>
+            </span>
+            <span class="summary-amount">{{ formattedCurrency(load.totalAmount) }}</span>
+            <span class="chevron" aria-hidden="true">⌄</span>
+          </button>
+
+          <div class="load-detail" [id]="detailId(load)" [hidden]="!isExpanded(load.id)">
+            <div class="snapshot-strip" aria-label="Snapshot costi carico">
+              <span>Acqua {{ formattedCurrency(load.waterAmount) }}</span>
+              <span>Energia {{ formattedCurrency(load.energyAmount) }}</span>
+              <span>Totale pesi {{ formattedNumber(load.totalWeight) }}</span>
+            </div>
+            <div class="detail-grid">
+              @for (item of load.breakdown; track trackBreakdown($index, item)) {
+                <div class="detail-item">
+                  <span>{{ item.personName }}</span>
+                  <strong>Peso {{ formattedNumber(item.weight) }}</strong>
+                  <em>{{ formattedCurrency(item.cost) }}</em>
+                </div>
+              }
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

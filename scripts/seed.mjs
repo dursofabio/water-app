@@ -29,14 +29,34 @@ await testEnv.withSecurityRulesDisabled(async (ctx) => {
     setDoc(doc(db, 'people', 'fabio'), { name: 'Fabio', initials: 'Fa' }),
   ]);
 
-  console.log('Inserimento carichi...');
+  console.log('Inserimento carichi canonici...');
   await Promise.all([
-    addDoc(collection(db, 'loads'), { personId: 'fernando', amount: 45.0 }),
-    addDoc(collection(db, 'loads'), { personId: 'fernando', amount: 30.0 }),
-    addDoc(collection(db, 'loads'), { personId: 'nino', amount: 60.0 }),
-    addDoc(collection(db, 'loads'), { personId: 'daniele', amount: 25.0 }),
-    addDoc(collection(db, 'loads'), { personId: 'fabio', amount: 80.0 }),
-    addDoc(collection(db, 'loads'), { personId: 'fabio', amount: 40.0 }),
+    addDoc(collection(db, 'loads'), {
+      date: new Date('2026-01-10T10:00:00.000Z'),
+      paidByPersonId: 'fabio',
+      totalAmount: 140.0,
+      waterPrice: 100.0,
+      energyPrice: 40.0,
+      breakdown: [
+        { personId: 'fernando', weight: 3, amount: 45.0 },
+        { personId: 'nino', weight: 3, amount: 45.0 },
+        { personId: 'daniele', weight: 1, amount: 15.0 },
+        { personId: 'fabio', weight: 7 / 3, amount: 35.0 },
+      ],
+    }),
+    addDoc(collection(db, 'loads'), {
+      date: new Date('2026-02-10T10:00:00.000Z'),
+      paidByPersonId: 'fernando',
+      totalAmount: 140.0,
+      waterPrice: 95.0,
+      energyPrice: 45.0,
+      breakdown: [
+        { personId: 'fernando', weight: 2, amount: 30.0 },
+        { personId: 'nino', weight: 1, amount: 15.0 },
+        { personId: 'daniele', weight: 2 / 3, amount: 10.0 },
+        { personId: 'fabio', weight: 17 / 3, amount: 85.0 },
+      ],
+    }),
   ]);
 
   console.log('Inserimento pagamenti...');

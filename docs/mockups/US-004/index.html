@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AcquaApp - Ultimi carichi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <link rel="stylesheet" href="dashboard-loads.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-bar">
+      <div class="top-bar__inner">
+        <div class="brand">
+          <svg class="brand__icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 3 16 3z" fill="url(#drop)" />
+            <defs>
+              <linearGradient id="drop" x1="16" y1="3" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#7dd3fc" />
+                <stop offset="100%" stop-color="#0e7490" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand__name">AcquaApp</span>
+        </div>
+        <span class="live-badge">
+          <span class="live-dot" aria-hidden="true"></span>
+          Aggiornato in tempo reale
+        </span>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <section class="section" aria-label="Saldi per persona">
+        <div class="section-header">
+          <h1 class="section-title">Saldi</h1>
+          <span class="section-subtitle">Situazione aggiornata al <time>11 giu 2026, 09:24</time></span>
+        </div>
+        <div class="balance-grid">
+          <article class="balance-card" data-state="credit">
+            <span class="avatar">Fe</span>
+            <span class="status">Credito</span>
+            <strong>Fernando</strong>
+            <p>&euro;-25,00</p>
+          </article>
+          <article class="balance-card" data-state="debt">
+            <span class="avatar">Ni</span>
+            <span class="status">Debito</span>
+            <strong>Nino</strong>
+            <p>&euro;+30,00</p>
+          </article>
+          <article class="balance-card" data-state="debt">
+            <span class="avatar">Da</span>
+            <span class="status">Debito</span>
+            <strong>Daniele</strong>
+            <p>&euro;+25,00</p>
+          </article>
+          <article class="balance-card" data-state="zero">
+            <span class="avatar">Fa</span>
+            <span class="status">In pari</span>
+            <strong>Fabio</strong>
+            <p>&euro;0,00</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Ultimi carichi">
+        <div class="section-header section-header--loads">
+          <div>
+            <h2 class="section-title section-title--sm">Ultimi carichi</h2>
+            <span class="section-subtitle">Gli ultimi 10 movimenti con quote e prezzi snapshot.</span>
+          </div>
+          <span class="count-badge">10 carichi</span>
+        </div>
+
+        <div class="loads-list" id="loads-list">
+          <article class="load-row is-open">
+            <button class="load-summary" type="button" aria-expanded="true">
+              <span class="summary-date">09 giu</span>
+              <span class="summary-main">
+                <strong>Carico cisterna</strong>
+                <small>Pagato da Fabio</small>
+              </span>
+              <span class="summary-amount">&euro;120,00</span>
+              <span class="chevron" aria-hidden="true">⌄</span>
+            </button>
+            <div class="load-detail">
+              <div class="snapshot-strip">
+                <span>Acqua &euro;100,00</span>
+                <span>Energia &euro;20,00</span>
+                <span>Totale pesi 12</span>
+              </div>
+              <div class="detail-grid">
+                <div><span>Fernando</span><strong>Peso 2</strong><em>&euro;20,00</em></div>
+                <div><span>Nino</span><strong>Peso 3</strong><em>&euro;30,00</em></div>
+                <div><span>Daniele</span><strong>Peso 2.5</strong><em>&euro;25,00</em></div>
+                <div><span>Fabio</span><strong>Peso 4.5</strong><em>&euro;45,00</em></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="load-row">
+            <button class="load-summary" type="button" aria-expanded="false">
+              <span class="summary-date">02 giu</span>
+              <span class="summary-main">
+                <strong>Carico cisterna</strong>
+                <small>Pagato da Fernando</small>
+              </span>
+              <span class="summary-amount">&euro;75,00</span>
+              <span class="chevron" aria-hidden="true">⌄</span>
+            </button>
+            <div class="load-detail" hidden>
+              <div class="snapshot-strip">
+                <span>Acqua &euro;60,00</span>
+                <span>Energia &euro;15,00</span>
+                <span>Totale pesi 10</span>
+              </div>
+              <div class="detail-grid">
+                <div><span>Fernando</span><strong>Peso 2</strong><em>&euro;15,00</em></div>
+                <div><span>Nino</span><strong>Peso 2</strong><em>&euro;15,00</em></div>
+                <div><span>Daniele</span><strong>Peso 3</strong><em>&euro;22,50</em></div>
+                <div><span>Fabio</span><strong>Peso 3</strong><em>&euro;22,50</em></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="load-row">
+            <button class="load-summary" type="button" aria-expanded="false">
+              <span class="summary-date">21 mag</span>
+              <span class="summary-main">
+                <strong>Carico cisterna</strong>
+                <small>Pagato da Nino</small>
+              </span>
+              <span class="summary-amount">&euro;60,00</span>
+              <span class="chevron" aria-hidden="true">⌄</span>
+            </button>
+            <div class="load-detail" hidden>
+              <div class="snapshot-strip">
+                <span>Acqua &euro;45,00</span>
+                <span>Energia &euro;15,00</span>
+                <span>Totale pesi 8</span>
+              </div>
+              <div class="detail-grid">
+                <div><span>Fernando</span><strong>Peso 1</strong><em>&euro;7,50</em></div>
+                <div><span>Nino</span><strong>Peso 3</strong><em>&euro;22,50</em></div>
+                <div><span>Daniele</span><strong>Peso 2</strong><em>&euro;15,00</em></div>
+                <div><span>Fabio</span><strong>Peso 2</strong><em>&euro;15,00</em></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

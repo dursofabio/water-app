@@ -2,7 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { Dashboard } from './dashboard';
 import { BalanceService } from '../services/balance.service';
+import { DashboardLoadsService } from '../services/dashboard-loads.service';
 import { PersonBalance } from '../models/balance.model';
+import { DashboardLoad } from '../models/load.model';
 
 /**
  * Unit tests for DashboardComponent — US-003
@@ -18,9 +20,34 @@ const MOCK_BALANCES: PersonBalance[] = [
   { id: 'fabio',    name: 'Fabio',    initials: 'Fa', loadsTotal: 0, paymentsTotal: 0, balance: 0, status: 'zero' },
 ];
 
+const MOCK_LOADS: DashboardLoad[] = [
+  {
+    id: 'load-1',
+    paidAt: new Date('2026-06-09T10:00:00'),
+    paidByName: 'Fabio',
+    totalAmount: 120,
+    waterAmount: 100,
+    energyAmount: 20,
+    totalWeight: 12,
+    breakdown: [
+      { personId: 'fernando', personName: 'Fernando', weight: 2, cost: 20 },
+    ],
+  },
+];
+
 class MockBalanceService {
   readonly balancesResource = {
     value: signal(MOCK_BALANCES),
+    status: signal('resolved'),
+    isLoading: signal(false),
+    error: signal(undefined),
+    reload: () => true,
+  };
+}
+
+class MockDashboardLoadsService {
+  readonly latestLoadsResource = {
+    value: signal(MOCK_LOADS),
     status: signal('resolved'),
     isLoading: signal(false),
     error: signal(undefined),
@@ -38,6 +65,7 @@ describe('Dashboard (US-003)', () => {
       imports: [Dashboard],
       providers: [
         { provide: BalanceService, useClass: MockBalanceService },
+        { provide: DashboardLoadsService, useClass: MockDashboardLoadsService },
       ],
     }).compileComponents();
 
@@ -75,11 +103,16 @@ describe('Dashboard (US-003)', () => {
     expect(title?.textContent?.trim()).toBe('Saldi');
   });
 
-  it('renders a "Ultimi carichi" section with coming-soon badge', () => {
+  it('renders the latest loads list component', () => {
+    const list = el.querySelector('app-latest-loads-list');
+    expect(list).toBeTruthy();
+  });
+
+  it('renders a "Ultimi carichi" section with real load data', () => {
     const h2 = el.querySelector('h2.section-title--sm');
     expect(h2?.textContent?.trim()).toBe('Ultimi carichi');
-    const badge = el.querySelector('.coming-soon-badge');
-    expect(badge?.textContent?.trim()).toBe('Prossimamente');
+    expect(el.textContent).toContain('Pagato da Fabio');
+    expect(el.textContent).toContain('120,00');
   });
 
   it('balance grid has role="list" for accessibility', () => {
@@ -90,5 +123,10 @@ describe('Dashboard (US-003)', () => {
   it('exposes balancesResource from the service', () => {
     expect(component.balancesResource.value()).toHaveLength(4);
     expect(component.balancesResource.status()).toBe('resolved');
+  });
+
+  it('exposes latestLoadsResource from the service', () => {
+    expect(component.latestLoadsResource.value()).toHaveLength(1);
+    expect(component.latestLoadsResource.status()).toBe('resolved');
   });
 });

@@ -1,7 +1,9 @@
 import { Component, computed, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { BalanceService } from '../services/balance.service';
+import { DashboardLoadsService } from '../services/dashboard-loads.service';
 import { BalanceCard } from '../balance-card/balance-card';
+import { LatestLoadsList } from '../latest-loads-list/latest-loads-list';
 
 /**
  * DashboardComponent — US-003
@@ -13,14 +15,16 @@ import { BalanceCard } from '../balance-card/balance-card';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [DatePipe, BalanceCard],
+  imports: [DatePipe, BalanceCard, LatestLoadsList],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
 export class Dashboard {
   private readonly balanceService = inject(BalanceService);
+  private readonly dashboardLoadsService = inject(DashboardLoadsService);
 
   readonly balancesResource = this.balanceService.balancesResource;
+  readonly latestLoadsResource = this.dashboardLoadsService.latestLoadsResource;
   readonly now = new Date();
   readonly balanceErrorMessage = computed(() => {
     const error = this.balancesResource.error();

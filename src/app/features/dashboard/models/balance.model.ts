@@ -5,12 +5,6 @@ export interface Person {
   initials: string;
 }
 
-/** Firestore document in the 'loads' collection */
-export interface Load {
-  personId: string;
-  amount: number;
-}
-
 /** Firestore document in the 'payments' collection */
 export interface Payment {
   personId: string;

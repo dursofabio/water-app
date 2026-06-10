@@ -33,7 +33,13 @@ const getOnSnapshotMock = async () => {
 };
 
 type TestPerson = { id: string; name: string; initials: string };
-type TestMovement = { personId: string; amount: number };
+type TestMovement =
+  | { personId: string; amount: number }
+  | {
+      paidByPersonId: string;
+      totalAmount: number;
+      breakdown: { personId: string; weight: number; amount: number }[];
+    };
 type TestDocument = TestPerson | TestMovement;
 
 describe('BalanceService — getBalances() (US-003)', () => {
@@ -55,10 +61,10 @@ describe('BalanceService — getBalances() (US-003)', () => {
     });
   });
 
-  function createService(
+  function createService<TLoad extends TestMovement, TPayment extends TestMovement>(
     people$: Subject<TestPerson[]>,
-    loads$: Subject<TestMovement[]>,
-    payments$: Subject<TestMovement[]>,
+    loads$: Subject<TLoad[]>,
+    payments$: Subject<TPayment[]>,
   ): BalanceService {
     onSnapshotMock.mockImplementation(
       (
@@ -168,6 +174,38 @@ describe('BalanceService — getBalances() (US-003)', () => {
     expect(fernando.balance).toBe(40);
     expect(fabio.balance).toBe(100);
     expect(nino.balance).toBe(0);
+  });
+
+  it('calcola i carichi canonici dal breakdown per persona', () => {
+    const people$ = new Subject<{ id: string; name: string; initials: string }[]>();
+    const loads$ = new Subject<TestMovement[]>();
+    const payments$ = new Subject<{ personId: string; amount: number }[]>();
+    service = createService(people$, loads$, payments$);
+
+    const results: import('../models/balance.model').PersonBalance[][] = [];
+    service.getBalances().subscribe((b) => results.push(b));
+
+    seedPeople(people$);
+    loads$.next([
+      {
+        paidByPersonId: 'fabio',
+        totalAmount: 100,
+        breakdown: [
+          { personId: 'fernando', weight: 1, amount: 25 },
+          { personId: 'nino', weight: 2, amount: 50 },
+          { personId: 'daniele', weight: 1, amount: 25 },
+        ],
+      },
+      { personId: 'fernando', amount: 10 },
+    ]);
+    payments$.next([{ personId: 'nino', amount: 20 }]);
+
+    const latest = results[results.length - 1];
+
+    expect(latest.find((b) => b.id === 'fernando')!.loadsTotal).toBe(35);
+    expect(latest.find((b) => b.id === 'nino')!.loadsTotal).toBe(50);
+    expect(latest.find((b) => b.id === 'nino')!.balance).toBe(30);
+    expect(latest.find((b) => b.id === 'fabio')!.loadsTotal).toBe(0);
   });
 
   it('include una persona presente nel database anche se non ha movimenti', () => {

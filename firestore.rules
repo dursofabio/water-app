@@ -15,6 +15,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // /people — lettura pubblica, scrittura solo admin
+    match /people/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // /payments — lettura pubblica, scrittura solo admin
     match /payments/{document=**} {
       allow read: if true;
