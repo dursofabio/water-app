@@ -45,3 +45,7 @@ Thumbs.db
 
 # Environment files (contain Firebase credentials — populate manually per environment)
 src/environments/
+
+# Firebase logs
+firebase-debug.log
+firestore-debug.log
