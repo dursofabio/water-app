@@ -6,7 +6,7 @@ epic:
   title: Fondazione del Progetto
 priority: HIGH
 points: 3
-status: TODO
+status: REVIEW
 scope: MVP
 body: |-
   #### US-001: Scaffold applicazione Angular con Material e suite di test
