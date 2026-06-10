@@ -1,0 +1,30 @@
+schema: archetipo/spec/v2
+code: US-014
+title: Script di import storico da Excel
+epic:
+  code: EP-006
+  title: Import Storico
+priority: HIGH
+points: 5
+status: TODO
+scope: MVP
+body: |-
+  #### US-014: Script di import storico da Excel
+
+  **Epic:** EP-006 | **Priorità:** HIGH | **Punti:** 5 | **Stato:** TODO
+  **Bloccata da:** -
+
+  **User Story**
+  Come Fabio (gestore),
+  voglio uno script Node.js che importi su Firestore tutti i carichi e i pagamenti dal file `docs/2025_GestioneAcqua.xlsx`,
+  per partire con lo storico completo senza reinserire i dati a mano.
+
+  **Dimostrazione**
+  Dopo l'implementazione, Fabio esegue lo script da terminale, vede un log riepilogativo con il numero di carichi e pagamenti importati, e i dati storici compaiono su Firestore.
+
+  **Criteri di Accettazione**
+  - [ ] Lo script standalone legge `docs/2025_GestioneAcqua.xlsx` e importa carichi e pagamenti (anticipi) su Firestore
+  - [ ] Le date Excel in formato seriale sono convertite in timestamp JS con `(serial - 25569) * 86400000`
+  - [ ] Ogni carico importato include pesi, prezzi snapshot e costi per persona coerenti con il foglio
+  - [ ] A fine esecuzione lo script stampa un riepilogo: numero carichi e pagamenti importati ed eventuali righe scartate
+  - [ ] Una doppia esecuzione accidentale non produce duplicati (o lo script avvisa e si ferma se i dati esistono già)

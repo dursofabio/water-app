@@ -1,0 +1,29 @@
+schema: archetipo/spec/v2
+code: US-017
+title: Export PDF del riepilogo per persona
+epic:
+  code: EP-007
+  title: Funzionalità di Crescita
+priority: LOW
+points: 3
+status: TODO
+scope: GROWTH
+body: |-
+  #### US-017: Export PDF del riepilogo per persona
+
+  **Epic:** EP-007 | **Priorità:** LOW | **Punti:** 3 | **Stato:** TODO
+  **Bloccata da:** -
+
+  **User Story**
+  Come Fernando (inquilino),
+  voglio scaricare un PDF con il riepilogo del mio saldo, dei carichi e dei pagamenti,
+  per conservare una copia personale della mia situazione.
+
+  **Dimostrazione**
+  Dopo l'implementazione, l'inquilino apre la dashboard, sceglie la propria persona, clicca "Esporta PDF" e scarica un documento con saldo, carichi e pagamenti che lo riguardano.
+
+  **Criteri di Accettazione**
+  - [ ] Dalla dashboard è possibile generare un PDF di riepilogo per una persona selezionata
+  - [ ] Il PDF include saldo netto, elenco carichi con quota personale ed elenco pagamenti
+  - [ ] Il PDF riporta la data di generazione
+  - [ ] Il download funziona da browser mobile

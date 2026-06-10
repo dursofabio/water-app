@@ -1,0 +1,30 @@
+schema: archetipo/spec/v2
+code: US-008
+title: Inserimento carico con pesi e snapshot prezzi
+epic:
+  code: EP-003
+  title: Gestione Carichi
+priority: HIGH
+points: 5
+status: TODO
+scope: MVP
+body: |-
+  #### US-008: Inserimento carico con pesi e snapshot prezzi
+
+  **Epic:** EP-003 | **Priorità:** HIGH | **Punti:** 5 | **Stato:** TODO
+  **Bloccata da:** -
+
+  **User Story**
+  Come Fabio (gestore),
+  voglio registrare un carico della cisterna con data, chi ha pagato e pesi per le 4 persone, con i prezzi correnti auto-popolati e salvati come snapshot,
+  per registrare un carico dal telefono in 30 secondi senza calcoli manuali.
+
+  **Dimostrazione**
+  Dopo l'implementazione, Fabio apre il form da mobile, compila data, chi ha pagato e pesi, salva, e il carico compare su Firestore con i costi per persona già calcolati e i prezzi snapshot del momento.
+
+  **Criteri di Accettazione**
+  - [ ] Il form include: data, chi ha pagato (select tra le 4 persone), pesi numerici per le 4 persone con default 1
+  - [ ] I prezzi correnti (acqua + energia) sono auto-popolati da `/config` e modificabili come override; se `/config` non esiste vengono usati valori di default
+  - [ ] Al salvataggio i prezzi vengono salvati come snapshot nel documento del carico
+  - [ ] Il costo per persona è calcolato e salvato come `(peso / somma_pesi) * (prezzo_acqua + prezzo_energia)`
+  - [ ] Validazione: pesi >= 0, somma pesi > 0, data obbligatoria

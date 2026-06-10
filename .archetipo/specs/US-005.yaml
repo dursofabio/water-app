@@ -1,0 +1,31 @@
+schema: archetipo/spec/v2
+code: US-005
+title: Lista ultimi pagamenti sulla dashboard
+epic:
+  code: EP-001
+  title: Dashboard Pubblica
+priority: MEDIUM
+points: 2
+status: TODO
+blocked_by:
+  - US-003
+scope: MVP
+body: |-
+  #### US-005: Lista ultimi pagamenti sulla dashboard
+
+  **Epic:** EP-001 | **Priorità:** MEDIUM | **Punti:** 2 | **Stato:** TODO
+  **Bloccata da:** US-003
+
+  **User Story**
+  Come Fernando (inquilino),
+  voglio vedere sulla dashboard gli ultimi pagamenti registrati con data, persona e importo,
+  per verificare che i miei pagamenti siano stati conteggiati.
+
+  **Dimostrazione**
+  Dopo l'implementazione, l'inquilino apre la dashboard e vede la lista degli ultimi 10 pagamenti; dopo che Fabio registra un nuovo pagamento, la lista si aggiorna da sola.
+
+  **Criteri di Accettazione**
+  - [ ] La dashboard mostra gli ultimi 10 pagamenti ordinati per data decrescente
+  - [ ] Ogni riga mostra data, persona e importo (e nota se presente)
+  - [ ] La lista si aggiorna in tempo reale all'inserimento di un nuovo pagamento
+  - [ ] Con collezione vuota viene mostrato uno stato vuoto leggibile

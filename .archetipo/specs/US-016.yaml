@@ -1,0 +1,29 @@
+schema: archetipo/spec/v2
+code: US-016
+title: Storico variazioni prezzi con grafico
+epic:
+  code: EP-007
+  title: Funzionalità di Crescita
+priority: LOW
+points: 3
+status: TODO
+scope: GROWTH
+body: |-
+  #### US-016: Storico variazioni prezzi con grafico
+
+  **Epic:** EP-007 | **Priorità:** LOW | **Punti:** 3 | **Stato:** TODO
+  **Bloccata da:** -
+
+  **User Story**
+  Come Fabio (gestore),
+  voglio che ogni variazione di prezzo venga storicizzata e visualizzata in un grafico nel tempo,
+  per avere memoria delle variazioni e spiegarle agli inquilini.
+
+  **Dimostrazione**
+  Dopo l'implementazione, Fabio modifica un prezzo, poi apre la pagina dello storico e vede l'elenco delle variazioni con data e un grafico dell'andamento dei prezzi nel tempo.
+
+  **Criteri di Accettazione**
+  - [ ] Ogni modifica dei prezzi salva una voce di storico con data, prezzo acqua e prezzo energia
+  - [ ] Una pagina mostra l'elenco delle variazioni in ordine cronologico
+  - [ ] Un grafico visualizza l'andamento dei prezzi nel tempo
+  - [ ] Con una sola voce di storico la pagina resta leggibile e senza errori

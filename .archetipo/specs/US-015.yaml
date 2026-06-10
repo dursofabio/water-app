@@ -1,0 +1,30 @@
+schema: archetipo/spec/v2
+code: US-015
+title: Validazione saldi importati contro il foglio Excel
+epic:
+  code: EP-006
+  title: Import Storico
+priority: MEDIUM
+points: 2
+status: TODO
+blocked_by:
+  - US-014
+scope: MVP
+body: |-
+  #### US-015: Validazione saldi importati contro il foglio Excel
+
+  **Epic:** EP-006 | **Priorità:** MEDIUM | **Punti:** 2 | **Stato:** TODO
+  **Bloccata da:** US-014
+
+  **User Story**
+  Come Fabio (gestore),
+  voglio confrontare i saldi calcolati dall'app dopo l'import con i totali del foglio Excel originale,
+  per fidarmi dei numeri mostrati agli inquilini fin dal primo giorno.
+
+  **Dimostrazione**
+  Dopo l'implementazione, Fabio esegue la verifica e ottiene un report che confronta, persona per persona, il saldo calcolato dall'app con il totale del foglio Excel, evidenziando eventuali scostamenti.
+
+  **Criteri di Accettazione**
+  - [ ] Esiste una procedura di verifica che confronta i saldi per persona calcolati dall'app con i totali del foglio Excel
+  - [ ] Il report evidenzia per ciascuna persona lo scostamento, se presente
+  - [ ] Eventuali discrepanze sono spiegate o corrette prima di considerare l'import valido

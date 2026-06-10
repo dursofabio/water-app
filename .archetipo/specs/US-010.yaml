@@ -1,0 +1,31 @@
+schema: archetipo/spec/v2
+code: US-010
+title: Modifica e cancellazione carichi
+epic:
+  code: EP-003
+  title: Gestione Carichi
+priority: MEDIUM
+points: 3
+status: TODO
+blocked_by:
+  - US-008
+scope: MVP
+body: |-
+  #### US-010: Modifica e cancellazione carichi
+
+  **Epic:** EP-003 | **Priorità:** MEDIUM | **Punti:** 3 | **Stato:** TODO
+  **Bloccata da:** US-008
+
+  **User Story**
+  Come Fabio (gestore),
+  voglio modificare o cancellare un carico esistente dalla lista admin,
+  per correggere errori di inserimento mantenendo i saldi coerenti.
+
+  **Dimostrazione**
+  Dopo l'implementazione, Fabio apre la lista carichi nell'area admin, corregge un peso sbagliato e i costi vengono ricalcolati; cancellando un carico dopo conferma, questo sparisce anche dalla dashboard.
+
+  **Criteri di Accettazione**
+  - [ ] L'area admin mostra la lista dei carichi con azioni di modifica e cancellazione
+  - [ ] La modifica precompila il form con i dati esistenti e al salvataggio ricalcola i costi per persona
+  - [ ] La cancellazione richiede una conferma esplicita prima di eliminare
+  - [ ] Dopo modifica o cancellazione i saldi della dashboard riflettono il nuovo stato

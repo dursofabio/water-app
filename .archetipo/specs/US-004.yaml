@@ -1,0 +1,31 @@
+schema: archetipo/spec/v2
+code: US-004
+title: Lista ultimi carichi con dettaglio costi per persona
+epic:
+  code: EP-001
+  title: Dashboard Pubblica
+priority: HIGH
+points: 3
+status: TODO
+blocked_by:
+  - US-003
+scope: MVP
+body: |-
+  #### US-004: Lista ultimi carichi con dettaglio costi per persona
+
+  **Epic:** EP-001 | **Priorità:** HIGH | **Punti:** 3 | **Stato:** TODO
+  **Bloccata da:** US-003
+
+  **User Story**
+  Come Fernando (inquilino),
+  voglio vedere sulla dashboard gli ultimi carichi con data, chi ha pagato e il breakdown dei costi per persona,
+  per capire come è stato calcolato il mio debito.
+
+  **Dimostrazione**
+  Dopo l'implementazione, l'inquilino apre la dashboard, vede la lista degli ultimi 10 carichi e, espandendo un carico, legge i pesi e i costi calcolati per ciascuna persona.
+
+  **Criteri di Accettazione**
+  - [ ] La dashboard mostra gli ultimi 10 carichi ordinati per data decrescente
+  - [ ] Ogni riga mostra data, chi ha pagato e costo totale del carico
+  - [ ] Il dettaglio espandibile mostra pesi, prezzi snapshot (acqua + energia) e costo per persona
+  - [ ] La lista si aggiorna in tempo reale all'inserimento di un nuovo carico

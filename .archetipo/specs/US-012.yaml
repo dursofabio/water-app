@@ -1,0 +1,31 @@
+schema: archetipo/spec/v2
+code: US-012
+title: Modifica e cancellazione pagamenti
+epic:
+  code: EP-004
+  title: Gestione Pagamenti
+priority: MEDIUM
+points: 2
+status: TODO
+blocked_by:
+  - US-011
+scope: MVP
+body: |-
+  #### US-012: Modifica e cancellazione pagamenti
+
+  **Epic:** EP-004 | **Priorità:** MEDIUM | **Punti:** 2 | **Stato:** TODO
+  **Bloccata da:** US-011
+
+  **User Story**
+  Come Fabio (gestore),
+  voglio modificare o cancellare un pagamento esistente,
+  per correggere importi o registrazioni errate mantenendo i saldi corretti.
+
+  **Dimostrazione**
+  Dopo l'implementazione, Fabio corregge l'importo di un pagamento dalla lista admin e, cancellandone un altro dopo conferma, entrambe le operazioni si riflettono sui saldi.
+
+  **Criteri di Accettazione**
+  - [ ] La lista pagamenti admin espone azioni di modifica e cancellazione
+  - [ ] La modifica precompila il form con i dati esistenti
+  - [ ] La cancellazione richiede una conferma esplicita
+  - [ ] Dopo modifica o cancellazione i saldi della dashboard riflettono il nuovo stato

@@ -1,0 +1,31 @@
+schema: archetipo/spec/v2
+code: US-002
+title: Configurazione Firebase e primo deploy su Hosting
+epic:
+  code: EP-000
+  title: Fondazione del Progetto
+priority: HIGH
+points: 3
+status: TODO
+blocked_by:
+  - US-001
+scope: MVP
+body: |-
+  #### US-002: Configurazione Firebase e primo deploy su Hosting
+
+  **Epic:** EP-000 | **Priorità:** HIGH | **Punti:** 3 | **Stato:** TODO
+  **Bloccata da:** US-001
+
+  **User Story**
+  Come Fabio (gestore),
+  voglio l'app collegata a Firebase (Firestore, Auth, Hosting) e pubblicata online,
+  per poterla raggiungere da qualsiasi dispositivo tramite un URL condivisibile.
+
+  **Dimostrazione**
+  Dopo l'implementazione, chiunque può aprire l'URL pubblico Firebase Hosting da mobile e vedere la shell di AcquaApp servita in HTTPS, con l'app connessa al progetto Firestore.
+
+  **Criteri di Accettazione**
+  - [ ] AngularFire è configurato e l'app si connette al progetto Firebase senza errori in console
+  - [ ] Le Firestore Security Rules sono deployate: lettura pubblica su `/loads`, `/payments`, `/config`; scrittura solo per UID presenti in `/admins`
+  - [ ] `firebase deploy` pubblica l'app su Firebase Hosting
+  - [ ] L'URL pubblico HTTPS mostra l'app correttamente da browser mobile

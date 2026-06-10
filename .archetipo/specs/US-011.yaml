@@ -1,0 +1,28 @@
+schema: archetipo/spec/v2
+code: US-011
+title: Inserimento pagamento per persona
+epic:
+  code: EP-004
+  title: Gestione Pagamenti
+priority: HIGH
+points: 2
+status: TODO
+scope: MVP
+body: |-
+  #### US-011: Inserimento pagamento per persona
+
+  **Epic:** EP-004 | **Priorità:** HIGH | **Punti:** 2 | **Stato:** TODO
+  **Bloccata da:** -
+
+  **User Story**
+  Come Fabio (gestore),
+  voglio registrare un pagamento ricevuto con data, persona, importo e nota opzionale,
+  per tracciare chi ha pagato e aggiornare automaticamente i saldi.
+
+  **Dimostrazione**
+  Dopo l'implementazione, Fabio registra il pagamento di Fernando dal form admin e il documento compare su Firestore con tutti i campi salvati.
+
+  **Criteri di Accettazione**
+  - [ ] Il form include: data, persona (select tra le 4 persone), importo, nota opzionale
+  - [ ] Validazione: importo > 0, data e persona obbligatorie
+  - [ ] Il pagamento salvato è visibile nella lista pagamenti dell'area admin
