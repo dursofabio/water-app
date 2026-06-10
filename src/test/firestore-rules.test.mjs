@@ -1,7 +1,7 @@
 /**
  * Firestore Security Rules Test (US-002 — TASK-08)
  *
- * Requires the Firestore emulator running on localhost:8080.
+ * Requires the Firestore emulator running on 127.0.0.1:8080.
  * Start with: firebase emulators:start --only firestore
  *
  * Run with: node src/test/firestore-rules.test.mjs
@@ -9,9 +9,10 @@
  * Tests:
  * 1. Anonymous read on /loads → success (allow read: if true)
  * 2. Unauthenticated write on /loads → PERMISSION_DENIED
- * 3. Unauthenticated read on /payments → success (allow read: if true)
- * 4. Unauthenticated read on /config → success (allow read: if true)
- * 5. Unauthenticated read on /admins → PERMISSION_DENIED (requires auth)
+ * 3. Unauthenticated read on /people → success (allow read: if true)
+ * 4. Unauthenticated read on /payments → success (allow read: if true)
+ * 5. Unauthenticated read on /config → success (allow read: if true)
+ * 6. Unauthenticated read on /admins → PERMISSION_DENIED (requires auth)
  */
 
 import {
@@ -35,7 +36,7 @@ async function runTests() {
   testEnv = await initializeTestEnvironment({
     projectId,
     firestore: {
-      host: 'localhost',
+      host: '127.0.0.1',
       port: 8080,
       rules: firestoreRules,
     },
@@ -68,6 +69,18 @@ async function runTests() {
   await test('Anonymous write on /loads → PERMISSION_DENIED', async () => {
     await assertFails(
       anonymousDb.collection('loads').add({ test: true })
+    );
+  });
+
+  await test('Anonymous read on /people → success', async () => {
+    await assertSucceeds(
+      anonymousDb.collection('people').get()
+    );
+  });
+
+  await test('Anonymous write on /people → PERMISSION_DENIED', async () => {
+    await assertFails(
+      anonymousDb.collection('people').add({ test: true })
     );
   });
 
@@ -116,7 +129,7 @@ async function runTests() {
 runTests().catch((err) => {
   console.error('Test setup failed:', err.message);
   if (err.message.includes('ECONNREFUSED') || err.message.includes('connect')) {
-    console.error('\n⚠️  Could not connect to Firestore emulator at localhost:8080');
+    console.error('\n⚠️  Could not connect to Firestore emulator at 127.0.0.1:8080');
     console.error('   Start it with: firebase emulators:start --only firestore');
   }
   process.exit(1);

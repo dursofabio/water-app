@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { Dashboard } from './dashboard';
 import { BalanceService } from '../services/balance.service';
-import { PersonaBalance } from '../models/balance.model';
+import { PersonBalance } from '../models/balance.model';
 
 /**
  * Unit tests for DashboardComponent — US-003
@@ -11,11 +11,11 @@ import { PersonaBalance } from '../models/balance.model';
  * Observable so no Firestore connection is needed.
  */
 
-const MOCK_BALANCES: PersonaBalance[] = [
-  { id: 'fernando', nome: 'Fernando', iniziali: 'Fe', carichiTotale: 0, pagamentiTotale: 0, saldo: 0, stato: 'zero' },
-  { id: 'nino',     nome: 'Nino',     iniziali: 'Ni', carichiTotale: 0, pagamentiTotale: 0, saldo: 0, stato: 'zero' },
-  { id: 'daniele',  nome: 'Daniele',  iniziali: 'Da', carichiTotale: 0, pagamentiTotale: 0, saldo: 0, stato: 'zero' },
-  { id: 'fabio',    nome: 'Fabio',    iniziali: 'Fa', carichiTotale: 0, pagamentiTotale: 0, saldo: 0, stato: 'zero' },
+const MOCK_BALANCES: PersonBalance[] = [
+  { id: 'fernando', name: 'Fernando', initials: 'Fe', loadsTotal: 75, paymentsTotal: 100, balance: -25, status: 'credit' },
+  { id: 'nino',     name: 'Nino',     initials: 'Ni', loadsTotal: 60, paymentsTotal: 30, balance: 30, status: 'debt-mid' },
+  { id: 'daniele',  name: 'Daniele',  initials: 'Da', loadsTotal: 25, paymentsTotal: 0, balance: 25, status: 'debt-mid' },
+  { id: 'fabio',    name: 'Fabio',    initials: 'Fa', loadsTotal: 0, paymentsTotal: 0, balance: 0, status: 'zero' },
 ];
 
 class MockBalanceService {
@@ -52,9 +52,16 @@ describe('Dashboard (US-003)', () => {
     expect(component).toBeTruthy();
   });
 
-  it('renders 4 balance cards for the 4 persone', () => {
+  it('renders 4 balance cards for the 4 people', () => {
     const cards = el.querySelectorAll('app-balance-card');
     expect(cards.length).toBe(4);
+  });
+
+  it('renders balance card amounts from the resource value', () => {
+    expect(el.textContent).toContain('Fernando');
+    expect(el.textContent).toContain('−25,00');
+    expect(el.textContent).toContain('75,00');
+    expect(el.textContent).toContain('100,00');
   });
 
   it('renders the live badge in the header', () => {

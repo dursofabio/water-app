@@ -1,12 +1,12 @@
 import { Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PersonaBalance } from '../models/balance.model';
+import { PersonBalance } from '../models/balance.model';
 
 /**
  * BalanceCardComponent — US-003
  *
- * Visualizza il saldo netto di una persona in una card.
- * Segue fedelmente il mockup US-003: avatar, stato, nome, importo, breakdown.
+ * Displays the net balance for one person in a card.
+ * Follows the US-003 mockup: avatar, status, name, amount, breakdown.
  */
 @Component({
   selector: 'app-balance-card',
@@ -16,10 +16,10 @@ import { PersonaBalance } from '../models/balance.model';
   styleUrl: './balance-card.scss',
 })
 export class BalanceCard {
-  readonly persona = input.required<PersonaBalance>();
+  readonly person = input.required<PersonBalance>();
 
-  readonly statoLabel = computed(() => {
-    switch (this.persona().stato) {
+  readonly statusLabel = computed(() => {
+    switch (this.person().status) {
       case 'debt-high': return 'Debito';
       case 'debt-mid':  return 'Debito';
       case 'credit':    return 'Credito';
@@ -28,21 +28,21 @@ export class BalanceCard {
   });
 
   readonly amountPrefix = computed(() => {
-    const saldo = this.persona().saldo;
-    if (saldo > 0) return '+';
-    if (saldo < 0) return '−';
+    const balance = this.person().balance;
+    if (balance > 0) return '+';
+    if (balance < 0) return '−';
     return '';
   });
 
   readonly formattedAmount = computed(() =>
-    Math.abs(this.persona().saldo).toFixed(2).replace('.', ','),
+    Math.abs(this.person().balance).toFixed(2).replace('.', ','),
   );
 
-  readonly formattedCarichi = computed(() =>
-    this.persona().carichiTotale.toFixed(2).replace('.', ','),
+  readonly formattedLoads = computed(() =>
+    this.person().loadsTotal.toFixed(2).replace('.', ','),
   );
 
-  readonly formattedPagamenti = computed(() =>
-    this.persona().pagamentiTotale.toFixed(2).replace('.', ','),
+  readonly formattedPayments = computed(() =>
+    this.person().paymentsTotal.toFixed(2).replace('.', ','),
   );
 }

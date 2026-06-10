@@ -2,12 +2,33 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.0.
 
-## Development server
+## Local Development With Firestore Emulator
 
-To start a local development server, run:
+Use the Angular dev server for the frontend. It uses `src/environments/environment.ts`,
+which connects Firestore to the emulator on `127.0.0.1:8080`.
 
 ```bash
-ng serve
+# Terminal 1: start only the Firestore emulator
+npm run emulators
+
+# Terminal 2: seed emulator data
+npm run seed
+
+# Terminal 3: start the Angular frontend
+npm start
+```
+
+Open `http://localhost:4200/dashboard`.
+
+Do not use the Firebase Hosting emulator URL for local frontend development:
+it serves the production build from `dist/`, which uses `environment.prod.ts`.
+
+## Development server
+
+To start only the local Angular development server, run:
+
+```bash
+npm start
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.

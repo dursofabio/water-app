@@ -1,20 +1,20 @@
 <article
   class="balance-card"
-  [attr.data-state]="persona().stato"
+  [attr.data-state]="person().status"
   role="region"
-  [attr.aria-label]="'Saldo di ' + persona().nome"
+  [attr.aria-label]="'Saldo di ' + person().name"
 >
   <!-- Card header: avatar + stato -->
   <div class="card-header">
-    <div class="card-avatar" aria-hidden="true">{{ persona().iniziali }}</div>
+    <div class="card-avatar" aria-hidden="true">{{ person().initials }}</div>
     <div class="card-status-indicator">
       <span class="status-dot"></span>
-      <span class="card-status-label">{{ statoLabel() }}</span>
+      <span class="card-status-label">{{ statusLabel() }}</span>
     </div>
   </div>
 
   <!-- Nome -->
-  <p class="card-name">{{ persona().nome }}</p>
+  <p class="card-name">{{ person().name }}</p>
 
   <!-- Importo principale -->
   <p class="card-amount" [attr.aria-label]="formattedAmount() + ' euro'">
@@ -25,11 +25,11 @@
   <div class="card-breakdown" aria-label="Dettaglio calcolo">
     <div class="card-breakdown__row">
       <span class="card-breakdown__label">Carichi</span>
-      <span class="card-breakdown__value">€{{ formattedCarichi() }}</span>
+      <span class="card-breakdown__value">€{{ formattedLoads() }}</span>
     </div>
     <div class="card-breakdown__row">
       <span class="card-breakdown__label">Pagamenti</span>
-      <span class="card-breakdown__value">€{{ formattedPagamenti() }}</span>
+      <span class="card-breakdown__value">€{{ formattedPayments() }}</span>
     </div>
   </div>
 </article>

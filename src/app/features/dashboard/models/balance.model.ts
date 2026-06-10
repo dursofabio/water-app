@@ -1,48 +1,43 @@
-/**
- * Modello dati per i saldi per persona (US-003)
- */
-
-/** Documento Firestore nella collezione 'carichi' */
-export interface Carico {
-  personaId: string;
-  importo: number;
-}
-
-/** Documento Firestore nella collezione 'pagamenti' */
-export interface Pagamento {
-  personaId: string;
-  importo: number;
-}
-
-/** Stato semantico del saldo */
-export type StatoSaldo = 'debt-high' | 'debt-mid' | 'credit' | 'zero';
-
-/** Saldo calcolato per una persona */
-export interface PersonaBalance {
+/** Firestore document in the 'people' collection */
+export interface Person {
   id: string;
-  nome: string;
-  iniziali: string;
-  carichiTotale: number;
-  pagamentiTotale: number;
-  saldo: number;
-  stato: StatoSaldo;
+  name: string;
+  initials: string;
 }
 
-/** Persone fisse dell'applicazione */
-export const PERSONE: Pick<PersonaBalance, 'id' | 'nome' | 'iniziali'>[] = [
-  { id: 'fernando', nome: 'Fernando', iniziali: 'Fe' },
-  { id: 'nino',     nome: 'Nino',     iniziali: 'Ni' },
-  { id: 'daniele',  nome: 'Daniele',  iniziali: 'Da' },
-  { id: 'fabio',    nome: 'Fabio',    iniziali: 'Fa' },
-];
+/** Firestore document in the 'loads' collection */
+export interface Load {
+  personId: string;
+  amount: number;
+}
+
+/** Firestore document in the 'payments' collection */
+export interface Payment {
+  personId: string;
+  amount: number;
+}
+
+/** Semantic balance status */
+export type BalanceStatus = 'debt-high' | 'debt-mid' | 'credit' | 'zero';
+
+/** Computed balance for one person */
+export interface PersonBalance {
+  id: string;
+  name: string;
+  initials: string;
+  loadsTotal: number;
+  paymentsTotal: number;
+  balance: number;
+  status: BalanceStatus;
+}
 
 /**
- * Calcola lo stato semantico del saldo.
- * Saldo positivo = debito (deve pagare), negativo = credito (gli devono).
+ * Maps a numeric balance to a semantic status.
+ * Positive = owes money, negative = in credit, zero = settled.
  */
-export function calcolaStato(saldo: number): StatoSaldo {
-  if (saldo > 30)  return 'debt-high';
-  if (saldo > 0)   return 'debt-mid';
-  if (saldo < 0)   return 'credit';
+export function computeStatus(balance: number): BalanceStatus {
+  if (balance > 30) return 'debt-high';
+  if (balance > 0)  return 'debt-mid';
+  if (balance < 0)  return 'credit';
   return 'zero';
 }

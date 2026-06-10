@@ -1,74 +1,97 @@
 import { Injectable, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
+import { Firestore, collection, onSnapshot } from '@angular/fire/firestore';
 import { Observable, combineLatest, map } from 'rxjs';
 
 import {
-  Carico,
-  Pagamento,
-  PersonaBalance,
-  PERSONE,
-  calcolaStato,
+  Load,
+  Payment,
+  Person,
+  PersonBalance,
+  computeStatus,
 } from '../models/balance.model';
 
-export const EMPTY_BALANCES: PersonaBalance[] = PERSONE.map((persona) => ({
-  ...persona,
-  carichiTotale: 0,
-  pagamentiTotale: 0,
-  saldo: 0,
-  stato: 'zero',
-}));
+export const EMPTY_BALANCES: PersonBalance[] = [];
 
 /**
  * BalanceService — US-003
  *
- * Ascolta in real-time le collezioni Firestore 'carichi' e 'pagamenti',
- * calcola il saldo netto per ciascuna delle 4 persone e restituisce
- * un Observable<PersonaBalance[]> aggiornato ad ogni snapshot.
+ * Listens to Firestore 'people', 'loads', and 'payments' collections in real-time,
+ * computes the net balance for each person, and returns an
+ * Observable<PersonBalance[]> updated on every snapshot.
  *
- * Saldo netto = somma importi carichi della persona − somma importi pagamenti
- * Positivo = debito, negativo = credito, zero = pari.
+ * Net balance = sum of load amounts − sum of payment amounts.
+ * Positive = owes money, negative = in credit, zero = settled.
  */
 @Injectable({ providedIn: 'root' })
 export class BalanceService {
   private readonly firestore = inject(Firestore);
+
+  private readonly people$ = this.readCollection<Person>('people', { idField: 'id' });
+
+  private readonly loads$ = this.readCollection<Load>('loads');
+
+  private readonly payments$ = this.readCollection<Payment>('payments');
 
   readonly balancesResource = rxResource({
     defaultValue: EMPTY_BALANCES,
     stream: () => this.getBalances(),
   });
 
-  getBalances(): Observable<PersonaBalance[]> {
-    const carichi$ = collectionData(
-      collection(this.firestore, 'carichi'),
-    ) as Observable<Carico[]>;
+  getBalances(): Observable<PersonBalance[]> {
+    return combineLatest([this.people$, this.loads$, this.payments$]).pipe(
+      map(([people, loads, payments]) =>
+        people.map((person) => {
+          const loadsTotal = loads
+            .filter((l) => l.personId === person.id)
+            .reduce((sum, l) => sum + (l.amount ?? 0), 0);
 
-    const pagamenti$ = collectionData(
-      collection(this.firestore, 'pagamenti'),
-    ) as Observable<Pagamento[]>;
+          const paymentsTotal = payments
+            .filter((p) => p.personId === person.id)
+            .reduce((sum, p) => sum + (p.amount ?? 0), 0);
 
-    return combineLatest([carichi$, pagamenti$]).pipe(
-      map(([carichi, pagamenti]) =>
-        PERSONE.map((persona) => {
-          const carichiTotale = carichi
-            .filter((c) => c.personaId === persona.id)
-            .reduce((sum, c) => sum + (c.importo ?? 0), 0);
-
-          const pagamentiTotale = pagamenti
-            .filter((p) => p.personaId === persona.id)
-            .reduce((sum, p) => sum + (p.importo ?? 0), 0);
-
-          const saldo = carichiTotale - pagamentiTotale;
+          const balance = loadsTotal - paymentsTotal;
 
           return {
-            ...persona,
-            carichiTotale,
-            pagamentiTotale,
-            saldo,
-            stato: calcolaStato(saldo),
-          } satisfies PersonaBalance;
+            ...person,
+            loadsTotal,
+            paymentsTotal,
+            balance,
+            status: computeStatus(balance),
+          } satisfies PersonBalance;
         }),
       ),
     );
+  }
+
+  private readCollection<T>(
+    path: string,
+    options?: { idField: string },
+  ): Observable<T[]> {
+    const ref = collection(this.firestore, path);
+
+    return new Observable<T[]>((subscriber) =>
+      onSnapshot(
+        ref,
+        (snapshot) => {
+          const documents = snapshot.docs.map((document) => {
+            const data = document.data();
+            return options
+              ? { ...data, [options.idField]: document.id }
+              : data;
+          });
+
+          subscriber.next(documents as T[]);
+        },
+        (error) => {
+          subscriber.error(new Error(`Firestore collection "${path}" failed: ${this.formatError(error)}`));
+        },
+      ),
+    );
+  }
+
+  private formatError(error: unknown): string {
+    if (error instanceof Error) return error.message;
+    return String(error);
   }
 }

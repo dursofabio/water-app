@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { BalanceService } from '../services/balance.service';
 import { BalanceCard } from '../balance-card/balance-card';
@@ -22,6 +22,12 @@ export class Dashboard {
 
   readonly balancesResource = this.balanceService.balancesResource;
   readonly now = new Date();
+  readonly balanceErrorMessage = computed(() => {
+    const error = this.balancesResource.error();
+    if (!error) return 'Errore sconosciuto';
+    if (error instanceof Error) return error.message;
+    return String(error);
+  });
 
   retryBalances(): void {
     this.balancesResource.reload();

@@ -1,4 +1,4 @@
-# AcquaApp - Documento dei Requisiti di Prodotto
+# WaterApp - Documento dei Requisiti di Prodotto
 
 **Autore:** ARchetipo
 **Data:** 2026-06-10

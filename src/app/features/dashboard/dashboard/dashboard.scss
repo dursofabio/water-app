@@ -203,6 +203,12 @@
   margin: 0;
 }
 
+.resource-message__detail {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+}
+
 .resource-message__action {
   border: 1px solid var(--border-card);
   border-radius: 8px;

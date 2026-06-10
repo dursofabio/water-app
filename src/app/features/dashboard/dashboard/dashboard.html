@@ -41,12 +41,13 @@
         @if (balancesResource.isLoading()) {
           @for (persona of balancesResource.value(); track persona.id) {
             <div role="listitem" aria-busy="true">
-              <app-balance-card [persona]="persona" />
+              <app-balance-card [person]="persona" />
             </div>
           }
         } @else if (balancesResource.status() === 'error') {
           <div class="resource-message" role="status">
             <p>Non riesco ad aggiornare i saldi.</p>
+            <small class="resource-message__detail">{{ balanceErrorMessage() }}</small>
             <button type="button" class="resource-message__action" (click)="retryBalances()">
               Riprova
             </button>
@@ -54,7 +55,7 @@
         } @else {
           @for (persona of balancesResource.value(); track persona.id) {
             <div role="listitem">
-              <app-balance-card [persona]="persona" />
+              <app-balance-card [person]="persona" />
             </div>
           }
         }

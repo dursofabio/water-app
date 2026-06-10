@@ -43,4 +43,12 @@ describe('appConfig — Firebase provider registration (US-002)', () => {
       expect(typeof p).toBe('object');
     });
   });
+
+  it('uses the IPv4 Firestore emulator host in development', async () => {
+    const { environment } = await import('../environments/environment');
+    expect(environment.firestoreEmulator).toEqual({
+      host: '127.0.0.1',
+      port: 8080,
+    });
+  });
 });
