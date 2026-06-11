@@ -5,8 +5,15 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html {
   height: 100%;
+  overflow-x: hidden;
   @include mat.theme(
     (
       color: (
@@ -35,5 +42,6 @@ body {
   // Reset the user agent margin.
   margin: 0;
   height: 100%;
+  overflow-x: hidden;
 }
 /* You can add global styles to this file, and also import other style files */
