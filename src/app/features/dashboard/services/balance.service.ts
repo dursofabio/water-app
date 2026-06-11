@@ -20,8 +20,8 @@ export const EMPTY_BALANCES: PersonBalance[] = [];
  * computes the net balance for each person, and returns an
  * Observable<PersonBalance[]> updated on every snapshot.
  *
- * Net balance = sum of load amounts − sum of payment amounts.
- * Positive = owes money, negative = in credit, zero = settled.
+ * Net balance = sum of payment amounts − sum of load amounts.
+ * Positive = in credit (overpaid), negative = owes money, zero = settled.
  */
 @Injectable({ providedIn: 'root' })
 export class BalanceService {
@@ -49,7 +49,7 @@ export class BalanceService {
             .filter((p) => p.personId === person.id)
             .reduce((sum, p) => sum + (p.amount ?? 0), 0);
 
-          const balance = loadsTotal - paymentsTotal;
+          const balance = paymentsTotal - loadsTotal;
 
           return {
             ...person,

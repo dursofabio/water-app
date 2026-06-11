@@ -29,8 +29,8 @@ export class BalanceCard {
 
   readonly amountPrefix = computed(() => {
     const balance = this.person().balance;
-    if (balance > 0) return '+';
     if (balance < 0) return '−';
+    if (balance > 0) return '+';
     return '';
   });
 

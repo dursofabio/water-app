@@ -31,11 +31,11 @@ export interface PersonBalance {
 
 /**
  * Maps a numeric balance to a semantic status.
- * Positive = owes money, negative = in credit, zero = settled.
+ * Positive = in credit (overpaid), negative = owes money, zero = settled.
  */
 export function computeStatus(balance: number): BalanceStatus {
-  if (balance > 30) return 'debt-high';
-  if (balance > 0)  return 'debt-mid';
-  if (balance < 0)  return 'credit';
+  if (balance < -30) return 'debt-high';
+  if (balance < 0)   return 'debt-mid';
+  if (balance > 0)   return 'credit';
   return 'zero';
 }

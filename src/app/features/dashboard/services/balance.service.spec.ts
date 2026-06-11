@@ -174,8 +174,8 @@ describe('BalanceService — getBalances() (US-003)', () => {
 
     expect(fernando.loadsTotal).toBe(70);
     expect(fernando.paymentsTotal).toBe(30);
-    expect(fernando.balance).toBe(40);
-    expect(fabio.balance).toBe(100);
+    expect(fernando.balance).toBe(-40);
+    expect(fabio.balance).toBe(-100);
     expect(nino.balance).toBe(0);
   });
 
@@ -207,7 +207,7 @@ describe('BalanceService — getBalances() (US-003)', () => {
 
     expect(latest.find((b) => b.id === 'fernando')!.loadsTotal).toBe(35);
     expect(latest.find((b) => b.id === 'nino')!.loadsTotal).toBe(50);
-    expect(latest.find((b) => b.id === 'nino')!.balance).toBe(30);
+    expect(latest.find((b) => b.id === 'nino')!.balance).toBe(-30);
     expect(latest.find((b) => b.id === 'fabio')!.loadsTotal).toBe(0);
   });
 
@@ -239,7 +239,7 @@ describe('BalanceService — getBalances() (US-003)', () => {
     ]);
   });
 
-  it('assegna status "debt-high" quando balance > 30', () => {
+  it('assegna status "debt-high" quando balance < -30', () => {
     const people$ = new Subject<{ id: string; name: string; initials: string }[]>();
     const loads$ = new Subject<{ personId: string; amount: number }[]>();
     const payments$ = new Subject<{ personId: string; amount: number }[]>();
@@ -256,7 +256,7 @@ describe('BalanceService — getBalances() (US-003)', () => {
     expect(nino.status).toBe('debt-high');
   });
 
-  it('assegna status "debt-mid" quando 0 < balance <= 30', () => {
+  it('assegna status "debt-mid" quando -30 <= balance < 0', () => {
     const people$ = new Subject<{ id: string; name: string; initials: string }[]>();
     const loads$ = new Subject<{ personId: string; amount: number }[]>();
     const payments$ = new Subject<{ personId: string; amount: number }[]>();
@@ -273,7 +273,7 @@ describe('BalanceService — getBalances() (US-003)', () => {
     expect(daniele.status).toBe('debt-mid');
   });
 
-  it('assegna status "credit" quando balance < 0', () => {
+  it('assegna status "credit" quando balance > 0', () => {
     const people$ = new Subject<{ id: string; name: string; initials: string }[]>();
     const loads$ = new Subject<{ personId: string; amount: number }[]>();
     const payments$ = new Subject<{ personId: string; amount: number }[]>();
@@ -288,7 +288,7 @@ describe('BalanceService — getBalances() (US-003)', () => {
 
     const fabio = results[results.length - 1].find((b) => b.id === 'fabio')!;
     expect(fabio.status).toBe('credit');
-    expect(fabio.balance).toBe(-25);
+    expect(fabio.balance).toBe(25);
   });
 
   it('re-emette un array aggiornato quando Firestore cambia', () => {
@@ -307,6 +307,6 @@ describe('BalanceService — getBalances() (US-003)', () => {
 
     expect(results.length).toBeGreaterThanOrEqual(2);
     const last = results[results.length - 1];
-    expect(last.find((b) => b.id === 'fernando')!.balance).toBe(60);
+    expect(last.find((b) => b.id === 'fernando')!.balance).toBe(-60);
   });
 });
