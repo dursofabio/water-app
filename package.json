@@ -14,6 +14,7 @@
     "emulators:all": "firebase emulators:start --project acquaapp-dev",
     "seed": "node scripts/seed.mjs",
     "import:excel": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 node scripts/import-excel.mjs",
+    "validate:excel-balances": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 node scripts/validate-excel-balances.mjs",
     "deploy": "ng build && firebase deploy"
   },
   "private": true,

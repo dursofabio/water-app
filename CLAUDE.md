@@ -13,7 +13,8 @@ Documentazione per sviluppatori e agenti AI che lavorano su questo progetto.
 | `ng test --watch=false` | Esegue i test una volta sola (CI-friendly) |
 | `ng build` | Build di produzione nella cartella `dist/` |
 | `npm run import:excel` | Importa `docs/2025_GestioneAcqua.xlsx` su Firestore emulator con document ID deterministici |
-| `npm run test:import-excel` | Esegue i test parser/import idempotente dello storico Excel |
+| `npm run validate:excel-balances` | Confronta i saldi importati su Firestore emulator con i totali del foglio Excel |
+| `npm run test:import-excel` | Esegue i test parser/import/validazione dello storico Excel |
 
 ## Ambiente Locale con Firebase Emulator
 
@@ -69,9 +70,12 @@ Eseguire prima il Firestore emulator:
 ```bash
 npm run emulators
 npm run import:excel
+npm run validate:excel-balances
 ```
 
 Per sicurezza il comando npm imposta `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080` e usa il progetto `acquaapp-dev`. I documenti importati hanno ID deterministici (`excel-load-*`, `excel-payment-*`): una seconda esecuzione si ferma se trova dati già importati. Usare `node scripts/import-excel.mjs --force` solo per sovrascrivere intenzionalmente l'import Excel esistente, mantenendo sempre `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080` in locale.
+
+Dopo l'import, `npm run validate:excel-balances` legge lo stesso workbook e confronta per ogni persona carichi, anticipi e saldo netto con i documenti importati da Excel (`source: excel-2025`). Il report usa la stessa semantica della dashboard (`saldo = pagamenti - carichi`), evidenzia i delta e segnala come `EXPLAINED` le differenze riconducibili a voci note del foglio come `Fondo Cassa` o `In energia`; eventuali `FAIL` devono essere corretti o spiegati prima di considerare valido l'import.
 
 ## Struttura delle Directory
 

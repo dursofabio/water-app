@@ -23,6 +23,17 @@ Open `http://localhost:4200/dashboard`.
 Do not use the Firebase Hosting emulator URL for local frontend development:
 it serves the production build from `dist/`, which uses `environment.prod.ts`.
 
+## Historical Excel Import
+
+With the Firestore emulator running, import and validate the historical workbook:
+
+```bash
+npm run import:excel
+npm run validate:excel-balances
+```
+
+The validation report compares imported Firestore loads/payments with `docs/2025_GestioneAcqua.xlsx` person by person. `OK` means the app totals match the workbook, `EXPLAINED` means the base import matches but the workbook also contains documented adjustment rows, and `FAIL` must be resolved before trusting the import.
+
 ## Development server
 
 To start only the local Angular development server, run:
