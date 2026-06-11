@@ -1,0 +1,345 @@
+.admin-layout {
+  width: min(1080px, calc(100% - 1.5rem));
+  margin: 0 auto;
+  padding: 1.25rem 0 2rem;
+}
+
+.admin-intro {
+  padding: 1rem 0 0.5rem;
+}
+
+.admin-intro h1 {
+  margin: 0;
+  max-width: 10ch;
+  font-size: clamp(2rem, 11vw, 4.8rem);
+  line-height: 0.96;
+  letter-spacing: 0;
+}
+
+.admin-intro p:last-child {
+  max-width: 42rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.quick-actions {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.quick-action {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 68px;
+  padding: 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.04);
+  text-decoration: none;
+}
+
+.quick-action--primary {
+  border-color: var(--line-strong);
+  background: rgba(34, 211, 238, 0.1);
+}
+
+.quick-action__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius);
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--accent);
+  font-weight: 900;
+}
+
+.quick-action strong,
+.quick-action small {
+  display: block;
+}
+
+.quick-action small {
+  margin-top: 0.15rem;
+  color: var(--muted);
+}
+
+.panel {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(10, 23, 29, 0.88);
+  box-shadow: var(--shadow);
+}
+
+.panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.status-pill {
+  flex: none;
+  padding: 0.28rem 0.55rem;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-radius: 999px;
+  color: var(--ok);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.form-grid,
+.price-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.field,
+.price-card {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field span,
+.price-card span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.field small {
+  color: var(--faint);
+  font-size: 0.7rem;
+}
+
+.field input,
+.field select,
+.price-card input,
+.weight-row input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.72rem;
+  background: rgba(255, 255, 255, 0.055);
+  color: var(--text);
+}
+
+.weights {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.weight-row {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 5rem 1.5rem;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 58px;
+  padding: 0.5rem;
+  border: 1px solid rgba(103, 232, 249, 0.1);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #0e7490, var(--accent));
+  color: var(--accent-ink);
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.weight-row input {
+  min-height: 42px;
+  text-align: right;
+}
+
+.weight-row small {
+  color: var(--faint);
+  font-weight: 800;
+}
+
+.preview {
+  margin-top: 1rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(34, 211, 238, 0.12), rgba(255, 255, 255, 0.035));
+}
+
+.preview__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.preview__top span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.preview__top strong {
+  font-size: 1.4rem;
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+}
+
+.compare-grid span {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.55rem;
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.preview p,
+.notice,
+.list-row p {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.sticky-actions {
+  position: sticky;
+  bottom: 4.3rem;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  background: linear-gradient(180deg, transparent, var(--surface) 28%);
+}
+
+.list-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.8rem 0;
+  border-top: 1px solid rgba(103, 232, 249, 0.1);
+}
+
+.date-box {
+  display: grid;
+  place-items: center;
+  min-height: 46px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.date-box small {
+  color: var(--faint);
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+.list-row p {
+  margin: 0.15rem 0 0;
+}
+
+.amount {
+  color: var(--accent-2);
+}
+
+.row-actions {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+}
+
+.row-actions button {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.row-actions .danger {
+  border-color: rgba(251, 113, 133, 0.32);
+  color: var(--danger);
+}
+
+.price-card {
+  padding: 0.9rem;
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  border-radius: var(--radius-lg);
+  background: rgba(56, 189, 248, 0.07);
+}
+
+.price-card--energy {
+  border-color: rgba(251, 191, 36, 0.2);
+  background: rgba(251, 191, 36, 0.07);
+}
+
+.price-card strong {
+  font-size: 1.6rem;
+}
+
+@media (min-width: 720px) {
+  .quick-actions,
+  .form-grid,
+  .price-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .panel {
+    padding: 1.25rem;
+  }
+
+  .weights {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sticky-actions {
+    position: static;
+    width: fit-content;
+    margin-left: auto;
+    grid-template-columns: auto auto;
+    background: transparent;
+  }
+
+  .list-row {
+    grid-template-columns: 44px minmax(0, 1fr) auto auto;
+  }
+
+  .row-actions {
+    grid-column: auto;
+    display: flex;
+  }
+
+  .row-actions button {
+    width: 44px;
+  }
+}

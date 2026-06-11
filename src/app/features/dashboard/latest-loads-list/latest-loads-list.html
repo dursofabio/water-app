@@ -1,11 +1,11 @@
-<section class="loads-section" aria-label="Ultimi carichi">
-  <div class="section-header section-header--loads">
+<section class="loads-section ledger-card" aria-label="Ultimi carichi">
+  <div class="section-row section-header--loads">
     <div>
       <h2 class="section-title section-title--sm">Ultimi carichi</h2>
-      <span class="section-subtitle">Gli ultimi 10 movimenti con quote e prezzi snapshot.</span>
+      <span class="section-subtitle">Movimenti recenti che spiegano le quote del saldo.</span>
     </div>
     @if (!loadsResource().isLoading() && loadsResource().status() !== 'error') {
-      <span class="count-badge">{{ loadCountLabel() }}</span>
+      <span class="micro-label">{{ loadCountLabel() }}</span>
     }
   </div>
 

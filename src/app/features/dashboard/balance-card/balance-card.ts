@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PersonBalance } from '../models/balance.model';
 
@@ -17,15 +17,18 @@ import { PersonBalance } from '../models/balance.model';
 })
 export class BalanceCard {
   readonly person = input.required<PersonBalance>();
+  readonly isDetailOpen = signal(false);
 
   readonly statusLabel = computed(() => {
     switch (this.person().status) {
-      case 'debt-high': return 'Debito';
-      case 'debt-mid':  return 'Debito';
+      case 'debt-high': return 'Debito alto';
+      case 'debt-mid':  return 'Debito medio';
       case 'credit':    return 'Credito';
       case 'zero':      return 'In pari';
     }
   });
+
+  readonly detailId = computed(() => `balance-detail-${this.person().id}`);
 
   readonly amountPrefix = computed(() => {
     const balance = this.person().balance;
@@ -45,4 +48,26 @@ export class BalanceCard {
   readonly formattedPayments = computed(() =>
     this.person().paymentsTotal.toFixed(2).replace('.', ','),
   );
+
+  readonly resultLabel = computed(() => {
+    const amount = this.formattedAmount();
+
+    switch (this.person().status) {
+      case 'credit':
+        return `Credito €${amount}`;
+      case 'zero':
+        return 'Nessuna azione';
+      case 'debt-high':
+      case 'debt-mid':
+        return `€${amount} da versare`;
+    }
+  });
+
+  openDetail(): void {
+    this.isDetailOpen.set(true);
+  }
+
+  closeDetail(): void {
+    this.isDetailOpen.set(false);
+  }
 }

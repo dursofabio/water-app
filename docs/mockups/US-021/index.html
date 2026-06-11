@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>US-021 - Admin mobile-first</title>
+    <link rel="stylesheet" href="./shared.css" />
+    <link rel="stylesheet" href="./admin-mobile.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="top-bar">
+        <a class="back-link" href="#dashboard" aria-label="Vai alla dashboard pubblica">
+          <span aria-hidden="true">‹</span>
+          Dashboard
+        </a>
+        <strong>Admin</strong>
+        <button class="icon-button" type="button" aria-label="Logout">
+          <span aria-hidden="true">⎋</span>
+        </button>
+      </header>
+
+      <main class="admin-layout">
+        <section class="admin-intro" aria-labelledby="admin-title">
+          <p class="eyebrow">Operazioni ricorrenti</p>
+          <h1 id="admin-title">Registra senza perdere il filo.</h1>
+          <p>Carichi, pagamenti e prezzi restano a portata di pollice, con la dashboard pubblica sempre raggiungibile.</p>
+        </section>
+
+        <nav class="quick-actions" aria-label="Navigazione admin">
+          <a class="quick-action quick-action--primary" href="#carico">
+            <span class="quick-action__icon" aria-hidden="true">＋</span>
+            <span>
+              <strong>Nuovo carico</strong>
+              <small>Preview quote live</small>
+            </span>
+          </a>
+          <a class="quick-action" href="#pagamento">
+            <span class="quick-action__icon" aria-hidden="true">€</span>
+            <span>
+              <strong>Pagamento</strong>
+              <small>Persona e importo</small>
+            </span>
+          </a>
+          <a class="quick-action" href="#prezzi">
+            <span class="quick-action__icon" aria-hidden="true">↯</span>
+            <span>
+              <strong>Prezzi</strong>
+              <small>Acqua ed energia</small>
+            </span>
+          </a>
+        </nav>
+
+        <section class="panel" id="carico" aria-labelledby="load-title">
+          <div class="panel__header">
+            <div>
+              <p class="eyebrow">Carico cisterna</p>
+              <h2 id="load-title">Dettagli e ripartizione</h2>
+            </div>
+            <span class="status-pill">bozza valida</span>
+          </div>
+
+          <div class="form-grid">
+            <label class="field">
+              <span>Data</span>
+              <input value="2026-06-11" type="date" />
+              <small>Obbligatoria</small>
+            </label>
+            <label class="field">
+              <span>Pagato da</span>
+              <select>
+                <option>Fabio</option>
+                <option>Fernando</option>
+                <option>Nino</option>
+                <option>Daniele</option>
+              </select>
+              <small>Persona che ha anticipato</small>
+            </label>
+          </div>
+
+          <div class="weights" aria-label="Pesi per persona">
+            <label class="weight-row">
+              <span class="avatar">FE</span>
+              <strong>Fernando</strong>
+              <input value="1" inputmode="decimal" />
+              <small>kg</small>
+            </label>
+            <label class="weight-row">
+              <span class="avatar">NI</span>
+              <strong>Nino</strong>
+              <input value="1" inputmode="decimal" />
+              <small>kg</small>
+            </label>
+            <label class="weight-row">
+              <span class="avatar">DA</span>
+              <strong>Daniele</strong>
+              <input value="1" inputmode="decimal" />
+              <small>kg</small>
+            </label>
+            <label class="weight-row">
+              <span class="avatar">FA</span>
+              <strong>Fabio</strong>
+              <input value="1" inputmode="decimal" />
+              <small>kg</small>
+            </label>
+          </div>
+
+          <aside class="preview" aria-label="Anteprima costi carico">
+            <div class="preview__top">
+              <span>Anteprima costi</span>
+              <strong>€45,00</strong>
+            </div>
+            <div class="compare-grid">
+              <span>Fernando <strong>€11,25</strong></span>
+              <span>Nino <strong>€11,25</strong></span>
+              <span>Daniele <strong>€11,25</strong></span>
+              <span>Fabio <strong>€11,25</strong></span>
+            </div>
+            <p>Il totale quote coincide con acqua €35,00 + energia €10,00.</p>
+          </aside>
+
+          <div class="sticky-actions" aria-label="Azioni carico">
+            <button class="btn btn--ghost" type="button">Annulla</button>
+            <button class="btn btn--primary" type="button">Salva carico</button>
+          </div>
+        </section>
+
+        <section class="panel" id="pagamento" aria-labelledby="payment-title">
+          <div class="panel__header">
+            <div>
+              <p class="eyebrow">Pagamenti</p>
+              <h2 id="payment-title">Lista con azioni esplicite</h2>
+            </div>
+            <button class="btn btn--compact" type="button">Nuovo</button>
+          </div>
+
+          <article class="list-row">
+            <span class="date-box"><strong>10</strong><small>giu</small></span>
+            <div>
+              <strong>Fernando</strong>
+              <p>Bonifico ricevuto</p>
+            </div>
+            <strong class="amount">€100,00</strong>
+            <div class="row-actions" aria-label="Azioni pagamento Fernando">
+              <button type="button" aria-label="Modifica pagamento Fernando">✎</button>
+              <button class="danger" type="button" aria-label="Cancella pagamento Fernando">⌫</button>
+            </div>
+          </article>
+
+          <article class="list-row">
+            <span class="date-box"><strong>07</strong><small>giu</small></span>
+            <div>
+              <strong>Nino</strong>
+              <p>Contanti</p>
+            </div>
+            <strong class="amount">€30,00</strong>
+            <div class="row-actions" aria-label="Azioni pagamento Nino">
+              <button type="button" aria-label="Modifica pagamento Nino">✎</button>
+              <button class="danger" type="button" aria-label="Cancella pagamento Nino">⌫</button>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel" id="prezzi" aria-labelledby="prices-title">
+          <div class="panel__header">
+            <div>
+              <p class="eyebrow">Configurazione</p>
+              <h2 id="prices-title">Prezzi futuri</h2>
+            </div>
+            <span class="status-pill">da /config</span>
+          </div>
+
+          <div class="price-grid">
+            <label class="price-card">
+              <span>Acqua</span>
+              <strong>€35,00</strong>
+              <input value="35.00" inputmode="decimal" />
+            </label>
+            <label class="price-card price-card--energy">
+              <span>Energia</span>
+              <strong>€10,00</strong>
+              <input value="10.00" inputmode="decimal" />
+            </label>
+          </div>
+
+          <p class="notice">I carichi già salvati mantengono lo snapshot prezzi originale.</p>
+          <div class="sticky-actions">
+            <button class="btn btn--primary" type="button">Salva prezzi</button>
+          </div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="Navigazione rapida">
+        <a href="#carico" aria-current="page">Carichi</a>
+        <a href="#pagamento">Pagamenti</a>
+        <a href="#prezzi">Prezzi</a>
+        <a href="#dashboard">Dashboard</a>
+      </nav>
+    </div>
+  </body>
+</html>

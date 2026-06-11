@@ -300,4 +300,54 @@ describe('PaymentsListComponent', () => {
       expect(component.deleteError()).toBeNull();
     });
   });
+
+  describe('PaymentsListComponent — action clarity (US-021)', () => {
+    let fixture: ComponentFixture<PaymentsListComponent>;
+    let component: PaymentsListComponent;
+
+    beforeEach(async () => {
+      ({ fixture, component } = await setup());
+    });
+
+    it('each payment row has both edit and delete actions', () => {
+      const el = fixture.nativeElement as HTMLElement;
+      const rows = el.querySelectorAll('.payment-row');
+      rows.forEach((row) => {
+        expect(row.querySelector('a.icon-btn')).toBeTruthy();
+        expect(row.querySelector('button.icon-btn.danger')).toBeTruthy();
+      });
+    });
+
+    it('delete button has danger class', () => {
+      const el = fixture.nativeElement as HTMLElement;
+      const deleteBtns = el.querySelectorAll('button.icon-btn.danger');
+      expect(deleteBtns.length).toBe(2);
+      deleteBtns.forEach((btn) => {
+        expect(btn.classList.contains('danger')).toBe(true);
+      });
+    });
+
+    it('delete dialog opens with correct payment summary', () => {
+      component.openDeleteDialog('payment-1');
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement as HTMLElement;
+      const summary = el.querySelector('.dialog-payment-summary');
+      expect(summary).toBeTruthy();
+      expect(summary!.textContent).toContain('Fabio');
+      expect(summary!.textContent).toContain('50,00');
+    });
+
+    it('cancel button is distinct from delete button in dialog', () => {
+      component.openDeleteDialog('payment-1');
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement as HTMLElement;
+      const cancelBtn = el.querySelector('.dialog-actions .btn-secondary');
+      const deleteBtn = el.querySelector('.dialog-actions .btn-danger');
+      expect(cancelBtn).toBeTruthy();
+      expect(deleteBtn).toBeTruthy();
+      expect(cancelBtn).not.toBe(deleteBtn);
+    });
+  });
 });

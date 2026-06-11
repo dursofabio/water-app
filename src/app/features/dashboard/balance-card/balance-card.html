@@ -1,35 +1,57 @@
 <article
   class="balance-card"
   [attr.data-state]="person().status"
+  [class.is-flipped]="isDetailOpen()"
   role="region"
   [attr.aria-label]="'Saldo di ' + person().name"
 >
-  <!-- Card header: avatar + stato -->
-  <div class="card-header">
-    <div class="card-avatar" aria-hidden="true">{{ person().initials }}</div>
-    <div class="card-status-indicator">
-      <span class="status-dot"></span>
-      <span class="card-status-label">{{ statusLabel() }}</span>
-    </div>
-  </div>
+  <button
+    class="balance-card__face balance-card__front"
+    type="button"
+    [attr.aria-expanded]="isDetailOpen()"
+    [attr.aria-controls]="detailId()"
+    (click)="openDetail()"
+  >
+    <span class="balance-card__top">
+      <span class="avatar" aria-hidden="true">{{ person().initials.slice(0, 1) }}</span>
+      <span class="state-pill">{{ statusLabel() }}</span>
+    </span>
 
-  <!-- Nome -->
-  <p class="card-name">{{ person().name }}</p>
+    <span class="balance-card__body">
+      <span class="balance-card__name">{{ person().name }}</span>
+      <span class="balance-card__amount" [attr.aria-label]="formattedAmount() + ' euro'">
+        {{ amountPrefix() }}€{{ formattedAmount() }}
+      </span>
+      <span class="balance-card__hint">Tocca per vedere il calcolo</span>
+    </span>
 
-  <!-- Importo principale -->
-  <p class="card-amount" [attr.aria-label]="formattedAmount() + ' euro'">
-    <span class="card-amount__currency" aria-hidden="true">€</span>{{ amountPrefix() }}{{ formattedAmount() }}
-  </p>
+    <span class="balance-card__bar" aria-hidden="true">
+      <span></span>
+    </span>
+  </button>
 
-  <!-- Breakdown -->
-  <div class="card-breakdown" aria-label="Dettaglio calcolo">
-    <div class="card-breakdown__row">
-      <span class="card-breakdown__label">Carichi</span>
-      <span class="card-breakdown__value">€{{ formattedLoads() }}</span>
-    </div>
-    <div class="card-breakdown__row">
-      <span class="card-breakdown__label">Pagamenti</span>
-      <span class="card-breakdown__value">€{{ formattedPayments() }}</span>
-    </div>
+  <div
+    class="balance-card__face balance-card__back"
+    [id]="detailId()"
+    [attr.aria-hidden]="!isDetailOpen()"
+  >
+    <h2>{{ person().name }}</h2>
+    <dl>
+      <div>
+        <dt>Carichi</dt>
+        <dd>€{{ formattedLoads() }}</dd>
+      </div>
+      <div>
+        <dt>Pagamenti</dt>
+        <dd>€{{ formattedPayments() }}</dd>
+      </div>
+      <div>
+        <dt>Saldo</dt>
+        <dd>{{ resultLabel() }}</dd>
+      </div>
+    </dl>
+    <button class="balance-card__close" type="button" (click)="closeDetail()">
+      Torna al saldo
+    </button>
   </div>
 </article>

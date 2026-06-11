@@ -35,6 +35,7 @@ export class Dashboard {
   readonly latestLoadsResource = this.dashboardLoadsService.latestLoadsResource;
   readonly latestPaymentsResource = this.dashboardPaymentsService.latestPaymentsResource;
   readonly now = new Date();
+  readonly skeletonCards = [0, 1, 2, 3];
 
   readonly showDeniedBanner = computed(() => {
     const params = this.route.snapshot.queryParamMap;

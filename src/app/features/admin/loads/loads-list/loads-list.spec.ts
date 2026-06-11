@@ -248,4 +248,43 @@ describe('AdminLoadsListComponent', () => {
       expect(component.deleteError()).toBeNull();
     });
   });
+
+  describe('AdminLoadsListComponent — action clarity (US-021)', () => {
+    let fixture: ComponentFixture<AdminLoadsListComponent>;
+
+    beforeEach(async () => {
+      ({ fixture } = await setup());
+    });
+
+    it('edit link and delete button are distinct elements per row', () => {
+      const el = fixture.nativeElement as HTMLElement;
+      const rows = el.querySelectorAll('.load-row');
+      rows.forEach((row) => {
+        const editLink = row.querySelector('a.icon-btn');
+        const deleteBtn = row.querySelector('button.icon-btn.danger');
+        expect(editLink).toBeTruthy();
+        expect(deleteBtn).toBeTruthy();
+        expect(editLink).not.toBe(deleteBtn);
+      });
+    });
+
+    it('delete button has danger class distinct from edit link', () => {
+      const el = fixture.nativeElement as HTMLElement;
+      const editLinks = el.querySelectorAll('a.icon-btn');
+      const deleteBtns = el.querySelectorAll('button.icon-btn.danger');
+      expect(deleteBtns.length).toBeGreaterThan(0);
+      editLinks.forEach((link) => {
+        expect(link.classList.contains('danger')).toBe(false);
+      });
+    });
+
+    it('icon-btn elements are present for each load row', () => {
+      const el = fixture.nativeElement as HTMLElement;
+      const rows = el.querySelectorAll('.load-row');
+      rows.forEach((row) => {
+        const iconBtns = row.querySelectorAll('.icon-btn');
+        expect(iconBtns.length).toBeGreaterThanOrEqual(2);
+      });
+    });
+  });
 });

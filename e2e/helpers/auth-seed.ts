@@ -153,7 +153,7 @@ export async function signInUserInBrowser(
 
 // ─── US-007: localStorage auth seeding ───────────────────────────────────────
 
-const API_KEY = 'REPLACE_WITH_API_KEY';
+const API_KEY = 'acquaapp-dev-api-key';
 const APP_NAME = '[DEFAULT]';
 
 /**

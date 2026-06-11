@@ -50,13 +50,22 @@ const MOCK_PAYMENTS: DashboardPayment[] = [
   },
 ];
 
+let balancesValue = signal(MOCK_BALANCES);
+let balancesStatus = signal('resolved');
+let balancesLoading = signal(false);
+let balancesError = signal<unknown>(undefined);
+let balancesReloadCount = 0;
+
 class MockBalanceService {
   readonly balancesResource = {
-    value: signal(MOCK_BALANCES),
-    status: signal('resolved'),
-    isLoading: signal(false),
-    error: signal(undefined),
-    reload: () => true,
+    value: balancesValue,
+    status: balancesStatus,
+    isLoading: balancesLoading,
+    error: balancesError,
+    reload: () => {
+      balancesReloadCount += 1;
+      return true;
+    },
   };
 }
 
@@ -86,6 +95,12 @@ describe('Dashboard (US-003)', () => {
   let el: HTMLElement;
 
   beforeEach(async () => {
+    balancesValue = signal(MOCK_BALANCES);
+    balancesStatus = signal('resolved');
+    balancesLoading = signal(false);
+    balancesError = signal<unknown>(undefined);
+    balancesReloadCount = 0;
+
     await TestBed.configureTestingModule({
       imports: [Dashboard],
       providers: [
@@ -114,20 +129,20 @@ describe('Dashboard (US-003)', () => {
 
   it('renders balance card amounts from the resource value', () => {
     expect(el.textContent).toContain('Fernando');
-    expect(el.textContent).toContain('−25,00');
+    expect(el.textContent).toContain('−€25,00');
     expect(el.textContent).toContain('75,00');
     expect(el.textContent).toContain('100,00');
   });
 
-  it('renders the live badge in the header', () => {
-    const badge = el.querySelector('.live-badge');
+  it('renders the live sync chip in the header', () => {
+    const badge = el.querySelector('.sync-chip');
     expect(badge).toBeTruthy();
-    expect(badge?.textContent).toContain('Aggiornato in tempo reale');
+    expect(badge?.textContent).toContain('Aggiornato');
   });
 
-  it('renders the "Saldi" section title', () => {
-    const title = el.querySelector('h1.section-title');
-    expect(title?.textContent?.trim()).toBe('Saldi');
+  it('renders the US-020 dashboard headline', () => {
+    const title = el.querySelector('h1');
+    expect(title?.textContent?.trim()).toBe('Chi deve cosa, senza chiedere a Fabio.');
   });
 
   it('renders the latest loads list component', () => {
@@ -156,8 +171,42 @@ describe('Dashboard (US-003)', () => {
   });
 
   it('balance grid has role="list" for accessibility', () => {
-    const grid = el.querySelector('.balance-grid');
+    const grid = el.querySelector('.summary-cards');
     expect(grid?.getAttribute('role')).toBe('list');
+  });
+
+  it('renders balances before recent movements in the document order', () => {
+    const summary = el.querySelector('.summary');
+    const ledger = el.querySelector('.ledger-grid');
+    expect(summary).toBeTruthy();
+    expect(ledger).toBeTruthy();
+    expect((summary as Element).compareDocumentPosition(ledger as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('renders an empty balances state with a retry action', () => {
+    balancesValue.set([]);
+    fixture.detectChanges();
+
+    const empty = el.querySelector('.resource-message--empty');
+    const retry = empty?.querySelector('button');
+    expect(empty?.textContent).toContain('Nessun saldo disponibile');
+
+    retry?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(balancesReloadCount).toBe(1);
+  });
+
+  it('renders diagnostic balance errors and retries', () => {
+    balancesStatus.set('error');
+    balancesError.set(new Error('Firestore collection "people" failed: missing permissions'));
+    fixture.detectChanges();
+
+    const error = el.querySelector('.resource-message--error');
+    const retry = error?.querySelector('button');
+    expect(error?.textContent).toContain('Non riesco ad aggiornare i saldi');
+    expect(error?.textContent).toContain('Firestore collection "people" failed');
+
+    retry?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(balancesReloadCount).toBe(1);
   });
 
   it('exposes balancesResource from the service', () => {

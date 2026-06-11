@@ -1,33 +1,28 @@
 <div class="app-shell">
 
-  <!-- Header -->
   <header class="top-bar">
     <div class="top-bar__inner">
-      <div class="brand">
-        <svg class="brand__icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0020 0C26 13.5 16 3 16 3z" fill="url(#dash-drop)" />
-          <defs>
-            <linearGradient id="dash-drop" x1="16" y1="3" x2="16" y2="30" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#7dd3fc" />
-              <stop offset="100%" stop-color="#0e7490" />
-            </linearGradient>
-          </defs>
-        </svg>
+      <div class="brand" aria-label="AcquaApp dashboard">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="img">
+            <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 3 16 3z" />
+          </svg>
+        </span>
         <span class="brand__name">AcquaApp</span>
       </div>
-      <div class="header-meta">
-        <span class="live-badge">
-          <span class="live-dot" aria-hidden="true"></span>
-          Aggiornato in tempo reale
+
+      <div class="sync-chip" aria-label="Dati aggiornati in tempo reale">
+        <span class="sync-chip__dot" aria-hidden="true"></span>
+        <span>
+          Aggiornato
+          <time [dateTime]="now.toISOString()">{{ now | date:'d MMM yyyy, HH:mm' }}</time>
         </span>
       </div>
     </div>
   </header>
 
-  <!-- Main content -->
-  <main class="page-content">
+  <main class="dashboard" id="main">
 
-    <!-- Access denied banner — shown after unauthorized login attempt (US-006) -->
     @if (showDeniedBanner()) {
       <div class="access-denied-banner" role="alert" aria-live="assertive">
         <span class="access-denied-banner__icon" aria-hidden="true">&#9888;</span>
@@ -38,28 +33,40 @@
       </div>
     }
 
-
-    <!-- Section: saldi -->
-    <section class="section" aria-label="Saldi per persona">
-      <div class="section-header">
-        <h1 class="section-title">Saldi</h1>
-        <span class="section-subtitle">
-          Situazione aggiornata al
-          <time [dateTime]="now.toISOString()">{{ now | date:'d MMM yyyy, HH:mm' }}</time>
-        </span>
+    <section class="summary" aria-labelledby="summary-title">
+      <div class="summary__copy">
+        <p class="summary__kicker">Dashboard pubblica</p>
+        <h1 id="summary-title">Chi deve cosa, senza chiedere a Fabio.</h1>
+        <p class="summary__text">
+          Tutti vedono subito il proprio saldo. Il dettaglio resta sotto, quando serve capire il perché.
+        </p>
       </div>
 
-      <div class="balance-grid" role="list" aria-label="Saldi delle persone">
+      <div class="summary-cards" role="list" aria-label="Saldi immediati per persona">
         @if (balancesResource.isLoading()) {
-          @for (persona of balancesResource.value(); track persona.id) {
-            <div role="listitem" aria-busy="true">
-              <app-balance-card [person]="persona" />
+          @for (card of skeletonCards; track card) {
+            <div class="balance-skeleton" role="listitem" aria-busy="true">
+              <span></span>
+              <strong></strong>
+              <em></em>
             </div>
           }
         } @else if (balancesResource.status() === 'error') {
-          <div class="resource-message" role="status">
-            <p>Non riesco ad aggiornare i saldi.</p>
-            <small class="resource-message__detail">{{ balanceErrorMessage() }}</small>
+          <div class="resource-message resource-message--error" role="alert">
+            <div>
+              <p>Non riesco ad aggiornare i saldi.</p>
+              <small class="resource-message__detail">{{ balanceErrorMessage() }}</small>
+            </div>
+            <button type="button" class="resource-message__action" (click)="retryBalances()">
+              Riprova
+            </button>
+          </div>
+        } @else if (balancesResource.value().length === 0) {
+          <div class="resource-message resource-message--empty" role="status">
+            <div>
+              <p>Nessun saldo disponibile.</p>
+              <small class="resource-message__detail">Quando saranno presenti persone in Firestore, compariranno qui.</small>
+            </div>
             <button type="button" class="resource-message__action" (click)="retryBalances()">
               Riprova
             </button>
@@ -81,9 +88,8 @@
 
   </main>
 
-  <!-- Footer -->
   <footer class="app-footer">
-    <p>AcquaApp &mdash; gestione spese idriche condivise</p>
+    <p>AcquaApp - gestione spese idriche condivise</p>
   </footer>
 
 </div>

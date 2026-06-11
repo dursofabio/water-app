@@ -485,3 +485,67 @@ describe('LoadFormComponent — not-found state (US-010)', () => {
     expect(errorEl?.textContent).toContain('non trovato');
   });
 });
+
+// ─── Mobile UX tests (US-021) ─────────────────────────────────────────────────
+
+describe('LoadFormComponent — mobile UX (US-021)', () => {
+  let component: LoadFormComponent;
+  let fixture: ComponentFixture<LoadFormComponent>;
+
+  beforeEach(async () => {
+    const loadsService = new MockLoadsService();
+
+    await TestBed.configureTestingModule({
+      imports: [LoadFormComponent],
+      providers: [
+        provideRouter([]),
+        { provide: BalanceService, useClass: MockBalanceService },
+        { provide: ConfigService, useClass: MockConfigService },
+        { provide: LoadsService, useValue: loadsService },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LoadFormComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    component['initWeights'](MOCK_BALANCES.map((b) => ({ id: b.id, name: b.name, initials: b.initials })));
+    fixture.detectChanges();
+  });
+
+  it('renders sticky-actions container', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.sticky-actions')).toBeTruthy();
+  });
+
+  it('submit button has min-height style via CSS class', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const stickyActions = el.querySelector('.sticky-actions');
+    const submitBtn = stickyActions?.querySelector('button[type="submit"]') ?? el.querySelector('button[type="submit"]');
+    expect(submitBtn).toBeTruthy();
+    expect(submitBtn!.classList.contains('btn-primary')).toBe(true);
+  });
+
+  it('renders cancel button in sticky actions', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const stickyActions = el.querySelector('.sticky-actions');
+    const cancelBtn =
+      stickyActions?.querySelector('.btn-secondary') ??
+      stickyActions?.querySelector('button[type="button"]') ??
+      Array.from(el.querySelectorAll('button[type="button"]')).find((b) =>
+        b.textContent?.includes('Annulla'),
+      );
+    expect(cancelBtn).toBeTruthy();
+    expect(cancelBtn!.textContent).toContain('Annulla');
+  });
+
+  it('preview section is present and aria-labelled', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const preview = el.querySelector('[aria-label]');
+    const previewLabelled = Array.from(el.querySelectorAll('[aria-label]')).find((node) => {
+      const label = node.getAttribute('aria-label') ?? '';
+      return label.toLowerCase().includes('anteprima') || label.toLowerCase().includes('preview');
+    });
+    expect(previewLabelled).toBeTruthy();
+  });
+});

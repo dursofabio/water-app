@@ -244,3 +244,48 @@ describe('ConfigFormComponent (US-013)', () => {
     expect(errorEl.textContent).toContain('Errore di rete');
   });
 });
+
+describe('ConfigFormComponent — mobile UX (US-021)', () => {
+  let component: ConfigFormComponent;
+  let fixture: ComponentFixture<ConfigFormComponent>;
+  let configService: MockConfigService;
+
+  beforeEach(async () => {
+    configService = new MockConfigService();
+
+    await TestBed.configureTestingModule({
+      imports: [ConfigFormComponent],
+      providers: [
+        provideRouter([]),
+        { provide: ConfigService, useValue: configService },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ConfigFormComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('renders form-actions container', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.form-actions')).toBeTruthy();
+  });
+
+  it('renders prices-grid with two price-cards by default', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const cards = el.querySelectorAll('.price-card');
+    expect(cards.length).toBe(2);
+  });
+
+  it('submit button exists and has btn-primary class', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const btn = el.querySelector('button[type="submit"]');
+    expect(btn).toBeTruthy();
+    expect(btn?.classList.contains('btn-primary')).toBe(true);
+  });
+
+  it('renders info-note with snapshot explanation', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.info-note')).toBeTruthy();
+  });
+});

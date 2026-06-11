@@ -1,198 +1,221 @@
-/* BalanceCard component styles — US-003 */
-/* Mirrors the design tokens and card styles from the mockup */
-
 :host {
   display: contents;
 }
 
-/* --- Balance Card --- */
 .balance-card {
   position: relative;
-  background: var(--surface-card, #0b1e28);
-  border: 1px solid var(--border-card, rgba(103, 232, 249, 0.14));
-  border-radius: var(--radius-xl, 24px);
-  padding: var(--space-6, 1.5rem);
-  cursor: default;
-  transition:
-    transform var(--transition-base, 220ms ease),
-    box-shadow var(--transition-base, 220ms ease),
-    background var(--transition-base, 220ms ease);
-  overflow: hidden;
-  box-shadow: var(--shadow-card, 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3));
+  min-height: 196px;
+  perspective: 1200px;
 
-  /* Left accent stripe */
-  &::before {
-    content: '';
-    position: absolute;
-    top: var(--space-5, 1.25rem);
-    left: 0;
-    width: 4px;
-    height: calc(100% - var(--space-10, 2.5rem));
-    border-radius: 0 3px 3px 0;
-    background: var(--card-accent, var(--color-zero, #6b7280));
-    transition: background var(--transition-base, 220ms ease);
-  }
-
-  /* Atmospheric glow */
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -20px;
-    right: -20px;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: radial-gradient(circle, var(--card-glow, transparent) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-card, 0 4px 24px rgba(0, 0, 0, 0.5)), var(--shadow-glow, 0 0 24px rgba(6, 182, 212, 0.12));
-    background: var(--surface-card-hover, #0e2737);
-  }
-
-  /* State variants */
-  &[data-state='debt-high'] {
-    --card-accent: var(--color-debt-strong, #ef4444);
-    --card-glow: rgba(239, 68, 68, 0.12);
-    --amount-color: var(--color-debt-strong, #ef4444);
-    --label-color: rgba(239, 68, 68, 0.7);
-  }
-
+  &[data-state='debt-high'],
   &[data-state='debt-mid'] {
-    --card-accent: var(--color-debt-mid, #f97316);
-    --card-glow: rgba(249, 115, 22, 0.1);
-    --amount-color: var(--color-debt-mid, #f97316);
-    --label-color: rgba(249, 115, 22, 0.7);
+    --state-color: var(--status-debt, #fb923c);
+    --state-surface: rgba(251, 146, 60, 0.14);
+    --bar-width: 58%;
   }
 
   &[data-state='credit'] {
-    --card-accent: var(--color-credit, #22c55e);
-    --card-glow: rgba(34, 197, 94, 0.1);
-    --amount-color: var(--color-credit, #22c55e);
-    --label-color: rgba(34, 197, 94, 0.7);
+    --state-color: var(--status-credit, #34d399);
+    --state-surface: rgba(52, 211, 153, 0.14);
+    --bar-width: 75%;
   }
 
   &[data-state='zero'] {
-    --card-accent: var(--color-zero, #6b7280);
-    --card-glow: rgba(107, 114, 128, 0.08);
-    --amount-color: var(--color-zero, #6b7280);
-    --label-color: rgba(107, 114, 128, 0.5);
+    --state-color: var(--status-zero, #94a3b8);
+    --state-surface: rgba(148, 163, 184, 0.14);
+    --bar-width: 100%;
   }
 }
 
-/* --- Card header --- */
-.card-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: var(--space-5, 1.25rem);
-}
-
-.card-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--surface-overlay, rgba(6, 176, 212, 0.06));
-  border: 1px solid var(--border-card, rgba(103, 232, 249, 0.14));
-  font-size: var(--text-base, 1rem);
-  font-weight: 600;
-  color: var(--text-secondary, #7fbfcc);
-  letter-spacing: -0.01em;
-  flex-shrink: 0;
-  text-transform: uppercase;
-}
-
-.card-status-indicator {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--card-accent, var(--color-zero, #6b7280));
-  flex-shrink: 0;
-}
-
-.card-status-label {
-  font-size: var(--text-xs, 0.75rem);
-  font-weight: 500;
-  color: var(--label-color, var(--color-zero, #6b7280));
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-/* --- Name --- */
-.card-name {
-  font-size: var(--text-sm, 0.875rem);
-  font-weight: 500;
-  color: var(--text-secondary, #7fbfcc);
-  letter-spacing: -0.01em;
-  margin-bottom: var(--space-2, 0.5rem);
-}
-
-/* --- Amount --- */
-.card-amount {
-  font-family: var(--font-mono, 'DM Mono', 'Courier New', monospace);
-  font-size: var(--text-3xl, 2.25rem);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  color: var(--amount-color, var(--text-primary, #e0f6fa));
-  line-height: 1.1;
-  transition: color var(--transition-base, 220ms ease);
-  animation: count-in 0.4s ease both;
-}
-
-.card-amount__currency {
-  font-size: 0.55em;
-  font-weight: 400;
-  opacity: 0.7;
-  vertical-align: super;
-  margin-right: 1px;
-}
-
-/* --- Breakdown --- */
-.card-breakdown {
-  margin-top: var(--space-5, 1.25rem);
-  padding-top: var(--space-4, 1rem);
-  border-top: 1px solid var(--border-subtle, rgba(103, 232, 249, 0.1));
+.balance-card__face {
+  width: 100%;
+  min-height: 196px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1, 0.25rem);
+  justify-content: space-between;
+  gap: var(--space-3, 0.75rem);
+  border: 1px solid var(--border-strong, rgba(103, 232, 249, 0.24));
+  border-radius: var(--radius, 18px);
+  padding: var(--space-5, 1.25rem);
+  background:
+    linear-gradient(145deg, rgba(34, 211, 238, 0.1), transparent 56%),
+    var(--surface-raised, #0c2029);
+  box-shadow: var(--shadow-panel, 0 24px 80px rgba(0, 0, 0, 0.36));
+  backface-visibility: hidden;
+  transition: transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.card-breakdown__row {
+.balance-card__front {
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.balance-card__front:focus-visible,
+.balance-card__close:focus-visible {
+  outline: 2px solid var(--accent-strong, #67e8f9);
+  outline-offset: 3px;
+}
+
+.balance-card__back {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(145deg, rgba(103, 232, 249, 0.12), transparent 52%),
+    var(--surface-strong, #102c36);
+  transform: rotateY(180deg);
+}
+
+.balance-card.is-flipped .balance-card__front {
+  transform: rotateY(180deg);
+}
+
+.balance-card.is-flipped .balance-card__back {
+  transform: rotateY(360deg);
+}
+
+.balance-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4, 1rem);
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-subtle, rgba(165, 243, 252, 0.12));
+  border-radius: 12px;
+  background: var(--surface-soft, rgba(125, 211, 252, 0.07));
+  color: var(--accent-strong, #67e8f9);
+  font-weight: 700;
+}
+
+.state-pill {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  background: var(--state-surface);
+  color: var(--state-color);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.balance-card__body {
+  display: grid;
+  gap: var(--space-2, 0.5rem);
+}
+
+.balance-card__name,
+.balance-card__back h2 {
+  margin: var(--space-5, 1.25rem) 0 0;
+  color: var(--text-secondary, #a5cdd5);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.balance-card__amount {
+  margin: var(--space-2, 0.5rem) 0 0;
+  color: var(--state-color);
+  font-family: var(--font-mono, 'DM Mono', 'Courier New', monospace);
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  line-height: 1;
+}
+
+.balance-card__hint {
+  color: var(--text-muted, #6c99a5);
+  font-size: 0.875rem;
+}
+
+.balance-card__bar {
+  width: 100%;
+  height: 8px;
+  margin-top: var(--space-2, 0.5rem);
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.balance-card__bar span {
+  display: block;
+  width: var(--bar-width);
+  height: 100%;
+  border-radius: inherit;
+  background: var(--state-color);
+  opacity: 0.72;
+}
+
+.balance-card__back dl {
+  margin: 0;
+  display: grid;
+  gap: var(--space-2, 0.5rem);
+}
+
+.balance-card__back div {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  border-top: 1px solid var(--border-subtle, rgba(165, 243, 252, 0.12));
+  padding-top: var(--space-2, 0.5rem);
 }
 
-.card-breakdown__label {
-  font-size: var(--text-xs, 0.75rem);
-  color: var(--text-muted, #4a7e8a);
+.balance-card__back dt {
+  color: var(--text-muted, #6c99a5);
 }
 
-.card-breakdown__value {
+.balance-card__back dd {
+  margin: 0;
+  color: var(--text-secondary, #a5cdd5);
   font-family: var(--font-mono, 'DM Mono', 'Courier New', monospace);
-  font-size: var(--text-xs, 0.75rem);
-  color: var(--text-secondary, #7fbfcc);
-  font-weight: 500;
+  text-align: right;
 }
 
-@keyframes count-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
+.balance-card__close {
+  min-height: 38px;
+  border: 1px solid var(--border-strong, rgba(103, 232, 249, 0.24));
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.12);
+  color: var(--accent-strong, #67e8f9);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .balance-card,
+  .balance-card__face {
+    min-height: 148px;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .balance-card__name,
+  .balance-card__back h2 {
+    margin-top: var(--space-3, 0.75rem);
+  }
+
+  .avatar {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .balance-card__front,
+  .balance-card__back,
+  .balance-card.is-flipped .balance-card__front,
+  .balance-card.is-flipped .balance-card__back {
+    transform: none;
+  }
+
+  .balance-card__back {
+    display: none;
+  }
+
+  .balance-card.is-flipped .balance-card__front {
+    display: none;
+  }
+
+  .balance-card.is-flipped .balance-card__back {
+    display: flex;
   }
 }

@@ -49,27 +49,34 @@ describe('BalanceCard (US-003)', () => {
 
   it("renders the person's name", async () => {
     await createWithPerson(makePerson({ name: 'Fernando' }));
-    const nameEl = el.querySelector('.card-name');
+    const nameEl = el.querySelector('.balance-card__name');
     expect(nameEl?.textContent?.trim()).toBe('Fernando');
   });
 
-  it("renders the person's initials in the avatar", async () => {
+  it("renders the person's initial in the avatar", async () => {
     await createWithPerson(makePerson({ initials: 'Fe' }));
-    const avatar = el.querySelector('.card-avatar');
-    expect(avatar?.textContent?.trim()).toBe('Fe');
+    const avatar = el.querySelector('.avatar');
+    expect(avatar?.textContent?.trim()).toBe('F');
   });
 
-  it('statusLabel signal returns "Debito" for debt-high state', async () => {
+  it('statusLabel signal returns "Debito alto" for debt-high state', async () => {
     await createWithPerson(makePerson({ status: 'debt-high' }));
-    expect(component.statusLabel()).toBe('Debito');
-    const label = el.querySelector('.card-status-label');
-    expect(label?.textContent?.trim()).toBe('Debito');
+    expect(component.statusLabel()).toBe('Debito alto');
+    const label = el.querySelector('.state-pill');
+    expect(label?.textContent?.trim()).toBe('Debito alto');
+  });
+
+  it('statusLabel signal returns "Debito medio" for debt-mid state', async () => {
+    await createWithPerson(makePerson({ status: 'debt-mid' }));
+    expect(component.statusLabel()).toBe('Debito medio');
+    const label = el.querySelector('.state-pill');
+    expect(label?.textContent?.trim()).toBe('Debito medio');
   });
 
   it('statusLabel signal returns "Credito" for credit state', async () => {
     await createWithPerson(makePerson({ status: 'credit', balance: -25 }));
     expect(component.statusLabel()).toBe('Credito');
-    const label = el.querySelector('.card-status-label');
+    const label = el.querySelector('.state-pill');
     expect(label?.textContent?.trim()).toBe('Credito');
   });
 
@@ -100,12 +107,13 @@ describe('BalanceCard (US-003)', () => {
 
   it('renders breakdown rows with loads and payments totals', async () => {
     await createWithPerson(makePerson({ loadsTotal: 70, paymentsTotal: 30 }));
-    const rows = el.querySelectorAll('.card-breakdown__row');
-    expect(rows.length).toBe(2);
+    const rows = el.querySelectorAll('.balance-card__back dl div');
+    expect(rows.length).toBe(3);
     expect(rows[0].textContent).toContain('Carichi');
     expect(rows[0].textContent).toContain('70,00');
     expect(rows[1].textContent).toContain('Pagamenti');
     expect(rows[1].textContent).toContain('30,00');
+    expect(rows[2].textContent).toContain('Saldo');
   });
 
   it('renders data-state="zero" when balance is 0', async () => {
@@ -118,5 +126,41 @@ describe('BalanceCard (US-003)', () => {
     await createWithPerson(makePerson({ name: 'Fernando' }));
     const article = el.querySelector('article.balance-card');
     expect(article?.getAttribute('aria-label')).toBe('Saldo di Fernando');
+  });
+
+  it('renders a front button focused on the immediate balance', async () => {
+    await createWithPerson(makePerson({ name: 'Nino', balance: 30, status: 'debt-mid' }));
+    const front = el.querySelector<HTMLButtonElement>('.balance-card__front');
+    expect(front).toBeTruthy();
+    expect(front?.getAttribute('aria-expanded')).toBe('false');
+    expect(front?.textContent).toContain('Nino');
+    expect(front?.textContent).toContain('+€30,00');
+    expect(front?.textContent).toContain('Tocca per vedere il calcolo');
+  });
+
+  it('opens and closes the calculation detail with accessible state', async () => {
+    await createWithPerson(makePerson({ name: 'Nino', balance: 30, status: 'debt-mid' }));
+    const article = el.querySelector('article.balance-card');
+    const front = el.querySelector<HTMLButtonElement>('.balance-card__front');
+    const back = el.querySelector<HTMLElement>('.balance-card__back');
+    const close = el.querySelector<HTMLButtonElement>('.balance-card__close');
+
+    expect(article?.classList.contains('is-flipped')).toBe(false);
+    expect(back?.getAttribute('aria-hidden')).toBe('true');
+
+    front?.click();
+    fixture.detectChanges();
+
+    expect(component.isDetailOpen()).toBe(true);
+    expect(article?.classList.contains('is-flipped')).toBe(true);
+    expect(front?.getAttribute('aria-expanded')).toBe('true');
+    expect(back?.getAttribute('aria-hidden')).toBe('false');
+
+    close?.click();
+    fixture.detectChanges();
+
+    expect(component.isDetailOpen()).toBe(false);
+    expect(front?.getAttribute('aria-expanded')).toBe('false');
+    expect(back?.getAttribute('aria-hidden')).toBe('true');
   });
 });

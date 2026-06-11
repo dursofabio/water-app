@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AcquaApp - Dashboard Taste v2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <link rel="stylesheet" href="dashboard-taste.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-bar">
+      <div class="top-bar__inner">
+        <a class="brand" href="#" aria-label="AcquaApp dashboard">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" role="img">
+              <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 3 16 3z" />
+            </svg>
+          </span>
+          <span class="brand__name">AcquaApp</span>
+        </a>
+
+        <div class="sync-chip" aria-label="Dati aggiornati in tempo reale">
+          <span class="sync-chip__dot" aria-hidden="true"></span>
+          <span>11 giu 2026, 18:42</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard" id="main">
+      <section class="summary" aria-labelledby="summary-title">
+        <div class="summary__copy">
+          <p class="summary__kicker">Dashboard pubblica</p>
+          <h1 id="summary-title">Chi deve cosa, senza chiedere a Fabio.</h1>
+          <p class="summary__text">Tutti vedono subito il proprio saldo. Il dettaglio resta sotto, quando serve capire il perche.</p>
+        </div>
+
+        <div class="summary-cards" aria-label="Saldi immediati per persona">
+          <article class="balance-card balance-card--credit" data-person="fernando">
+            <button class="balance-card__face balance-card__front" type="button" aria-expanded="false">
+              <span class="balance-card__top">
+                <span class="avatar">F</span>
+                <span class="state-pill state-pill--credit">Credito</span>
+              </span>
+              <span class="balance-card__body">
+                <span class="balance-card__name">Fernando</span>
+                <span class="balance-card__amount balance-card__amount--credit">-€25,00</span>
+                <span class="balance-card__hint">Tocca per vedere il calcolo</span>
+              </span>
+              <span class="balance-card__bar" aria-hidden="true"><span style="width: 75%"></span></span>
+            </button>
+            <div class="balance-card__face balance-card__back" aria-hidden="true">
+              <h2>Fernando</h2>
+              <dl>
+                <div><dt>Carichi</dt><dd>€75,00</dd></div>
+                <div><dt>Pagamenti</dt><dd>€100,00</dd></div>
+                <div><dt>Saldo</dt><dd>Credito €25,00</dd></div>
+              </dl>
+              <button class="balance-card__close" type="button">Torna al saldo</button>
+            </div>
+          </article>
+
+          <article class="balance-card balance-card--debt" data-person="nino">
+            <button class="balance-card__face balance-card__front" type="button" aria-expanded="false">
+              <span class="balance-card__top">
+                <span class="avatar">N</span>
+                <span class="state-pill state-pill--debt">Debito medio</span>
+              </span>
+              <span class="balance-card__body">
+                <span class="balance-card__name">Nino</span>
+                <span class="balance-card__amount">+€30,00</span>
+                <span class="balance-card__hint">Tocca per vedere il calcolo</span>
+              </span>
+              <span class="balance-card__bar" aria-hidden="true"><span style="width: 58%"></span></span>
+            </button>
+            <div class="balance-card__face balance-card__back" aria-hidden="true">
+              <h2>Nino</h2>
+              <dl>
+                <div><dt>Carichi</dt><dd>€60,00</dd></div>
+                <div><dt>Pagamenti</dt><dd>€30,00</dd></div>
+                <div><dt>Saldo</dt><dd>€30,00 da versare</dd></div>
+              </dl>
+              <button class="balance-card__close" type="button">Torna al saldo</button>
+            </div>
+          </article>
+
+          <article class="balance-card balance-card--debt" data-person="daniele">
+            <button class="balance-card__face balance-card__front" type="button" aria-expanded="false">
+              <span class="balance-card__top">
+                <span class="avatar">D</span>
+                <span class="state-pill state-pill--debt">Debito medio</span>
+              </span>
+              <span class="balance-card__body">
+                <span class="balance-card__name">Daniele</span>
+                <span class="balance-card__amount">+€25,00</span>
+                <span class="balance-card__hint">Tocca per vedere il calcolo</span>
+              </span>
+              <span class="balance-card__bar" aria-hidden="true"><span style="width: 48%"></span></span>
+            </button>
+            <div class="balance-card__face balance-card__back" aria-hidden="true">
+              <h2>Daniele</h2>
+              <dl>
+                <div><dt>Carichi</dt><dd>€25,00</dd></div>
+                <div><dt>Pagamenti</dt><dd>€0,00</dd></div>
+                <div><dt>Saldo</dt><dd>€25,00 da versare</dd></div>
+              </dl>
+              <button class="balance-card__close" type="button">Torna al saldo</button>
+            </div>
+          </article>
+
+          <article class="balance-card balance-card--zero" data-person="fabio">
+            <button class="balance-card__face balance-card__front" type="button" aria-expanded="false">
+              <span class="balance-card__top">
+                <span class="avatar">F</span>
+                <span class="state-pill state-pill--zero">Pari</span>
+              </span>
+              <span class="balance-card__body">
+                <span class="balance-card__name">Fabio</span>
+                <span class="balance-card__amount balance-card__amount--zero">€0,00</span>
+                <span class="balance-card__hint">Tocca per vedere il calcolo</span>
+              </span>
+              <span class="balance-card__bar" aria-hidden="true"><span style="width: 100%"></span></span>
+            </button>
+            <div class="balance-card__face balance-card__back" aria-hidden="true">
+              <h2>Fabio</h2>
+              <dl>
+                <div><dt>Carichi</dt><dd>€120,00</dd></div>
+                <div><dt>Pagamenti</dt><dd>€120,00</dd></div>
+                <div><dt>Saldo</dt><dd>Nessuna azione</dd></div>
+              </dl>
+              <button class="balance-card__close" type="button">Torna al saldo</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="ledger" aria-label="Movimenti recenti">
+        <article class="ledger-card">
+          <div class="section-row">
+            <h2>Ultimi carichi</h2>
+            <span class="micro-label">quote</span>
+          </div>
+          <ol class="movement-list">
+            <li><span>07 giu</span><strong>Fabio</strong><em>€45,00</em></li>
+            <li><span>26 mag</span><strong>Fernando</strong><em>€35,00</em></li>
+            <li><span>11 mag</span><strong>Nino</strong><em>€45,00</em></li>
+          </ol>
+        </article>
+
+        <article class="ledger-card">
+          <div class="section-row">
+            <h2>Ultimi pagamenti</h2>
+            <span class="micro-label">anticipi</span>
+          </div>
+          <ol class="movement-list">
+            <li><span>09 giu</span><strong>Fernando</strong><em>€100,00</em></li>
+            <li><span>02 giu</span><strong>Fabio</strong><em>€120,00</em></li>
+            <li><span>20 mag</span><strong>Nino</strong><em>€30,00</em></li>
+          </ol>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

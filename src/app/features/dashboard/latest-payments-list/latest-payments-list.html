@@ -1,11 +1,11 @@
-<section class="payments-section" aria-label="Ultimi pagamenti">
-  <div class="section-header section-header--payments">
+<section class="payments-section ledger-card" aria-label="Ultimi pagamenti">
+  <div class="section-row section-header--payments">
     <div>
       <h2 class="section-title section-title--sm">Ultimi pagamenti</h2>
-      <span class="section-subtitle">Gli ultimi 10 incassi registrati.</span>
+      <span class="section-subtitle">Anticipi recenti che completano la lettura del saldo.</span>
     </div>
     @if (!paymentsResource().isLoading() && paymentsResource().status() !== 'error') {
-      <span class="count-badge">{{ paymentCountLabel() }}</span>
+      <span class="micro-label">{{ paymentCountLabel() }}</span>
     }
   </div>
 

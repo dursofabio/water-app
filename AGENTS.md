@@ -15,6 +15,7 @@ Documentazione per sviluppatori e agenti AI che lavorano su questo progetto.
 | `npm run import:excel` | Importa `docs/2025_GestioneAcqua.xlsx` su Firestore emulator con document ID deterministici |
 | `npm run validate:excel-balances` | Confronta i saldi importati su Firestore emulator con i totali del foglio Excel |
 | `npm run test:import-excel` | Esegue i test parser/import/validazione dello storico Excel |
+| `npm run seed:production` | Popola il Firestore di produzione reale bypassando le regole con l'Admin SDK (richiede `--admin-uid` e `--confirm`) |
 
 ## Ambiente Locale con Firebase Emulator
 

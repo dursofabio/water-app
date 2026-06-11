@@ -462,3 +462,60 @@ describe('PaymentFormComponent — create mode regression (US-012)', () => {
     expect(paymentsService.updatePayment).not.toHaveBeenCalled();
   });
 });
+
+describe('PaymentFormComponent — mobile UX (US-021)', () => {
+  let component: PaymentFormComponent;
+  let fixture: ComponentFixture<PaymentFormComponent>;
+  let paymentsService: MockPaymentsService;
+
+  beforeEach(async () => {
+    paymentsService = new MockPaymentsService();
+
+    await TestBed.configureTestingModule({
+      imports: [PaymentFormComponent],
+      providers: [
+        provideRouter([]),
+        { provide: BalanceService, useClass: MockBalanceService },
+        { provide: PaymentsService, useValue: paymentsService },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(PaymentFormComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('renders form-actions container', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.form-actions')).toBeTruthy();
+  });
+
+  it('submit button exists and has btn-primary class', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const btn = el.querySelector('button[type="submit"]');
+    expect(btn).toBeTruthy();
+    expect(btn?.classList.contains('btn-primary')).toBe(true);
+  });
+
+  it('cancel button exists', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const btn = el.querySelector('.form-actions .btn-secondary');
+    expect(btn).toBeTruthy();
+  });
+
+  it('renders person grid for selection', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const grid = el.querySelector('.person-grid');
+    expect(grid).toBeTruthy();
+    const cards = grid?.querySelectorAll('.person-card');
+    expect(cards!.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('preview card appears when person and amount are valid', () => {
+    component.selectPerson('fabio');
+    component.updateAmount(50);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.preview-card')).toBeTruthy();
+  });
+});

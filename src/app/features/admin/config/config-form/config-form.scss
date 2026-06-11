@@ -134,6 +134,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .price-card {
@@ -212,6 +216,7 @@
 
 .field__input {
   width: 100%;
+  min-height: 44px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(103, 232, 249, 0.16);
   border-radius: 8px;
@@ -321,9 +326,21 @@
 }
 
 .form-actions {
+  position: sticky;
+  bottom: 0;
+  background: rgba(6, 15, 20, 0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(103, 232, 249, 0.1);
+  padding: 0.875rem 0;
+  margin-top: 1.25rem;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
+
+  @media (max-width: 640px) {
+    padding-bottom: max(0.875rem, env(safe-area-inset-bottom));
+  }
 }
 
 .btn-primary {
@@ -332,6 +349,7 @@
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
+  min-height: 44px;
   padding: 0.875rem 1.5rem;
   background: linear-gradient(135deg, #0e7490, #38bdf8);
   border: none;
@@ -355,6 +373,7 @@
 
 .btn-secondary {
   width: 100%;
+  min-height: 44px;
   padding: 0.75rem 1.5rem;
   background: transparent;
   border: 1px solid rgba(103, 232, 249, 0.2);
