@@ -2,6 +2,7 @@ import {
   Component,
   OnInit,
   computed,
+  effect,
   inject,
   linkedSignal,
   signal,
@@ -77,10 +78,17 @@ export class LoadFormComponent implements OnInit {
   );
 
   readonly pricePerUnit = computed(() => this.waterPrice() + this.energyPrice());
+  readonly expectedTotal = computed(() => this.pricePerUnit());
+  readonly canShowPreviewValues = computed(() => this.totalWeight() > 0);
+  readonly previewWarning = computed(() =>
+    this.canShowPreviewValues()
+      ? null
+      : 'La somma dei pesi è 0: inserisci almeno un peso per calcolare la ripartizione.',
+  );
 
   readonly breakdown = computed(() => {
     const total = this.totalWeight();
-    const price = this.pricePerUnit();
+    const price = this.expectedTotal();
     return this.weights().map((pw) => ({
       ...pw,
       cost: total > 0 ? (pw.weight / total) * price : 0,
@@ -89,6 +97,12 @@ export class LoadFormComponent implements OnInit {
 
   readonly totalAmount = computed(() =>
     this.breakdown().reduce((sum, item) => sum + item.cost, 0),
+  );
+
+  readonly previewTotalMatchesExpected = computed(() =>
+    this.canShowPreviewValues()
+      ? Math.abs(this.totalAmount() - this.expectedTotal()) < 0.005
+      : false,
   );
 
   // --- Stato submit ---
@@ -104,6 +118,15 @@ export class LoadFormComponent implements OnInit {
       this.totalWeight() > 0 &&
       this.weights().every((pw) => pw.weight >= 0),
   );
+
+  constructor() {
+    effect(() => {
+      const people = this.people();
+      if (people.length > 0 && this.weights().length === 0) {
+        this.initWeights(people);
+      }
+    });
+  }
 
   ngOnInit(): void {
     // Inizializza i pesi con default 1 per ogni persona già disponibile

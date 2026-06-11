@@ -7,10 +7,12 @@ export interface Person {
 
 /** Firestore document in the 'payments' collection */
 export interface Payment {
+  id?: string;
   personId: string;
   amount: number;
-  date?: import('@angular/fire/firestore').Timestamp;
-  note?: string;
+  date?: Date | { toDate: () => Date } | string | number | null;
+  paidAt?: Date | { toDate: () => Date } | string | number | null;
+  note?: string | null;
 }
 
 /** Semantic balance status */

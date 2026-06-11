@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AcquaApp - US-009 Preview costi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+  <header class="topbar">
+    <button class="ghost" type="button" aria-label="Torna ai carichi">‹ Carichi</button>
+    <strong>Nuovo carico</strong>
+    <span class="brand">AcquaApp</span>
+  </header>
+
+  <main class="shell">
+    <section class="intro">
+      <p class="eyebrow">Preview in tempo reale</p>
+      <h1>Ripartizione visibile prima del salvataggio</h1>
+      <p>Modifica pesi e prezzi: il riquadro controlla subito quote, totale e stato di validazione.</p>
+    </section>
+
+    <form class="form-grid">
+      <section class="panel">
+        <h2>Pesi</h2>
+        <div class="weights" id="weights"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Prezzi snapshot</h2>
+        <label>
+          <span>Acqua</span>
+          <input id="water" type="number" min="0" step="0.01" value="35" />
+        </label>
+        <label>
+          <span>Energia</span>
+          <input id="energy" type="number" min="0" step="0.01" value="10" />
+        </label>
+      </section>
+
+      <section class="preview" aria-live="polite" aria-label="Anteprima costi per persona">
+        <div class="preview-head">
+          <div>
+            <p class="eyebrow">Anteprima costi</p>
+            <h2 id="preview-total">€45,00</h2>
+          </div>
+          <span id="balance-pill" class="pill ok">Somma corretta</span>
+        </div>
+
+        <div id="warning" class="warning" hidden>
+          La somma dei pesi è 0: inserisci almeno un peso per calcolare la ripartizione.
+        </div>
+
+        <div class="rows" id="rows"></div>
+
+        <footer class="preview-foot">
+          <span id="formula">Acqua €35,00 + energia €10,00</span>
+          <strong id="check">Totale anteprima €45,00</strong>
+        </footer>
+      </section>
+    </form>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

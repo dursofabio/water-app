@@ -1,7 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { ConfigService } from './config.service';
-import { Firestore } from '@angular/fire/firestore';
 import { DEFAULT_PRICES } from '../models/config.model';
 
 /**
@@ -48,20 +46,25 @@ vi.mock('@angular/fire/firestore', () => {
 });
 
 describe('ConfigService', () => {
-  let service: ConfigService;
+  let service: import('./config.service').ConfigService;
+  let serviceToken: typeof import('./config.service').ConfigService;
+  let firestoreToken: unknown;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    vi.resetModules();
     capturedSnapshotCallback = null;
     capturedErrorCallback = null;
+    firestoreToken = (await import('@angular/fire/firestore')).Firestore;
+    serviceToken = (await import('./config.service')).ConfigService;
 
     TestBed.configureTestingModule({
       providers: [
-        ConfigService,
-        { provide: Firestore, useValue: {} },
+        serviceToken,
+        { provide: firestoreToken, useValue: {} },
       ],
     });
 
-    service = TestBed.inject(ConfigService);
+    service = TestBed.inject(serviceToken);
   });
 
   it('should be created', () => {

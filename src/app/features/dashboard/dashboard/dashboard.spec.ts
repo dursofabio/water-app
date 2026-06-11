@@ -4,8 +4,10 @@ import { provideRouter } from '@angular/router';
 import { Dashboard } from './dashboard';
 import { BalanceService } from '../services/balance.service';
 import { DashboardLoadsService } from '../services/dashboard-loads.service';
+import { DashboardPaymentsService } from '../services/dashboard-payments.service';
 import { PersonBalance } from '../models/balance.model';
 import { DashboardLoad } from '../models/load.model';
+import { DashboardPayment } from '../models/payment.model';
 
 /**
  * Unit tests for DashboardComponent — US-003
@@ -36,6 +38,18 @@ const MOCK_LOADS: DashboardLoad[] = [
   },
 ];
 
+const MOCK_PAYMENTS: DashboardPayment[] = [
+  {
+    id: 'payment-1',
+    paidAt: new Date('2026-06-10T10:00:00'),
+    personId: 'fernando',
+    personName: 'Fernando',
+    personInitials: 'Fe',
+    amount: 100,
+    note: 'Bonifico istantaneo',
+  },
+];
+
 class MockBalanceService {
   readonly balancesResource = {
     value: signal(MOCK_BALANCES),
@@ -56,6 +70,16 @@ class MockDashboardLoadsService {
   };
 }
 
+class MockDashboardPaymentsService {
+  readonly latestPaymentsResource = {
+    value: signal(MOCK_PAYMENTS),
+    status: signal('resolved'),
+    isLoading: signal(false),
+    error: signal(undefined),
+    reload: () => true,
+  };
+}
+
 describe('Dashboard (US-003)', () => {
   let component: Dashboard;
   let fixture: ComponentFixture<Dashboard>;
@@ -68,6 +92,7 @@ describe('Dashboard (US-003)', () => {
         provideRouter([]),
         { provide: BalanceService, useClass: MockBalanceService },
         { provide: DashboardLoadsService, useClass: MockDashboardLoadsService },
+        { provide: DashboardPaymentsService, useClass: MockDashboardPaymentsService },
       ],
     }).compileComponents();
 
@@ -110,11 +135,24 @@ describe('Dashboard (US-003)', () => {
     expect(list).toBeTruthy();
   });
 
+  it('renders the latest payments list component', () => {
+    const list = el.querySelector('app-latest-payments-list');
+    expect(list).toBeTruthy();
+  });
+
   it('renders a "Ultimi carichi" section with real load data', () => {
-    const h2 = el.querySelector('h2.section-title--sm');
+    const h2 = el.querySelector('app-latest-loads-list h2.section-title--sm');
     expect(h2?.textContent?.trim()).toBe('Ultimi carichi');
     expect(el.textContent).toContain('Pagato da Fabio');
     expect(el.textContent).toContain('120,00');
+  });
+
+  it('renders a "Ultimi pagamenti" section with real payment data', () => {
+    const h2 = el.querySelector('app-latest-payments-list h2.section-title--sm');
+    expect(h2?.textContent?.trim()).toBe('Ultimi pagamenti');
+    expect(el.textContent).toContain('Fernando');
+    expect(el.textContent).toContain('100,00');
+    expect(el.textContent).toContain('Bonifico istantaneo');
   });
 
   it('balance grid has role="list" for accessibility', () => {
@@ -130,5 +168,10 @@ describe('Dashboard (US-003)', () => {
   it('exposes latestLoadsResource from the service', () => {
     expect(component.latestLoadsResource.value()).toHaveLength(1);
     expect(component.latestLoadsResource.status()).toBe('resolved');
+  });
+
+  it('exposes latestPaymentsResource from the service', () => {
+    expect(component.latestPaymentsResource.value()).toHaveLength(1);
+    expect(component.latestPaymentsResource.status()).toBe('resolved');
   });
 });

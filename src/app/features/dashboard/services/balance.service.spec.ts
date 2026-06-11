@@ -1,8 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { Subject, Subscription } from 'rxjs';
-import { BalanceService } from './balance.service';
-import { Firestore } from '@angular/fire/firestore';
 
 /**
  * Unit tests for BalanceService — US-003
@@ -43,20 +41,25 @@ type TestMovement =
 type TestDocument = TestPerson | TestMovement;
 
 describe('BalanceService — getBalances() (US-003)', () => {
-  let service: BalanceService;
+  let service: import('./balance.service').BalanceService;
+  let serviceToken: typeof import('./balance.service').BalanceService;
   let collectionMock: ReturnType<typeof vi.fn>;
   let onSnapshotMock: ReturnType<typeof vi.fn>;
+  let firestoreToken: unknown;
 
   beforeEach(async () => {
+    vi.resetModules();
     collectionMock = await getCollectionMock();
     onSnapshotMock = await getOnSnapshotMock();
+    firestoreToken = (await import('@angular/fire/firestore')).Firestore;
+    serviceToken = (await import('./balance.service')).BalanceService;
     collectionMock.mockClear();
     onSnapshotMock.mockReset();
 
     TestBed.configureTestingModule({
       providers: [
-        BalanceService,
-        { provide: Firestore, useValue: {} },
+        serviceToken,
+        { provide: firestoreToken, useValue: {} },
       ],
     });
   });
@@ -65,7 +68,7 @@ describe('BalanceService — getBalances() (US-003)', () => {
     people$: Subject<TestPerson[]>,
     loads$: Subject<TLoad[]>,
     payments$: Subject<TPayment[]>,
-  ): BalanceService {
+  ): import('./balance.service').BalanceService {
     onSnapshotMock.mockImplementation(
       (
         ref: { path: string },
@@ -101,7 +104,7 @@ describe('BalanceService — getBalances() (US-003)', () => {
       },
     );
 
-    return TestBed.inject(BalanceService);
+    return TestBed.inject(serviceToken);
   }
 
   function seedPeople(

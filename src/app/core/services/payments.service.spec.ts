@@ -1,7 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { Firestore } from '@angular/fire/firestore';
-import { PaymentsService } from './payments.service';
 
 /**
  * Unit tests for PaymentsService — US-011
@@ -39,20 +37,25 @@ vi.mock('@angular/fire/firestore', () => {
 });
 
 describe('PaymentsService', () => {
-  let service: PaymentsService;
+  let service: import('./payments.service').PaymentsService;
+  let serviceToken: typeof import('./payments.service').PaymentsService;
+  let firestoreToken: unknown;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    vi.resetModules();
     capturedCollection = undefined;
     capturedDocument = undefined;
+    firestoreToken = (await import('@angular/fire/firestore')).Firestore;
+    serviceToken = (await import('./payments.service')).PaymentsService;
 
     TestBed.configureTestingModule({
       providers: [
-        PaymentsService,
-        { provide: Firestore, useValue: {} },
+        serviceToken,
+        { provide: firestoreToken, useValue: {} },
       ],
     });
 
-    service = TestBed.inject(PaymentsService);
+    service = TestBed.inject(serviceToken);
   });
 
   it('should be created', () => {

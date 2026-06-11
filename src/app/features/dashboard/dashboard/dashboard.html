@@ -74,7 +74,10 @@
       </div>
     </section>
 
-    <app-latest-loads-list [loadsResource]="latestLoadsResource" />
+    <section class="ledger-grid" aria-label="Movimenti recenti">
+      <app-latest-loads-list [loadsResource]="latestLoadsResource" />
+      <app-latest-payments-list [paymentsResource]="latestPaymentsResource" />
+    </section>
 
   </main>
 

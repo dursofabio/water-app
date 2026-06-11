@@ -12,6 +12,8 @@ Documentazione per sviluppatori e agenti AI che lavorano su questo progetto.
 | `ng test` | Esegue la suite di test Vitest in modalità watch |
 | `ng test --watch=false` | Esegue i test una volta sola (CI-friendly) |
 | `ng build` | Build di produzione nella cartella `dist/` |
+| `npm run import:excel` | Importa `docs/2025_GestioneAcqua.xlsx` su Firestore emulator con document ID deterministici |
+| `npm run test:import-excel` | Esegue i test parser/import idempotente dello storico Excel |
 
 ## Ambiente Locale con Firebase Emulator
 
@@ -57,6 +59,19 @@ Aprire `http://localhost:4200` — la dashboard mostra saldi realistici per le 4
 ```bash
 npm run test:rules
 ```
+
+## Import Storico da Excel
+
+Lo script `npm run import:excel` legge `docs/2025_GestioneAcqua.xlsx`, verifica/crea `/people`, importa i carichi in `/loads` e gli anticipi in `/payments`.
+
+Eseguire prima il Firestore emulator:
+
+```bash
+npm run emulators
+npm run import:excel
+```
+
+Per sicurezza il comando npm imposta `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080` e usa il progetto `acquaapp-dev`. I documenti importati hanno ID deterministici (`excel-load-*`, `excel-payment-*`): una seconda esecuzione si ferma se trova dati già importati. Usare `node scripts/import-excel.mjs --force` solo per sovrascrivere intenzionalmente l'import Excel esistente, mantenendo sempre `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080` in locale.
 
 ## Struttura delle Directory
 

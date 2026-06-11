@@ -23,22 +23,19 @@ const getFirestoreMocks = async () => {
 };
 
 type TestPerson = { id: string; name: string; initials: string };
-type TestLoad = {
+type TestPayment = {
   id?: string;
   date?: Date;
-  paidByPersonId?: string;
-  totalAmount?: number;
-  waterPrice?: number;
-  energyPrice?: number;
-  breakdown?: { personId: string; weight: number; amount?: number; cost?: number }[];
-  personId?: string;
-  amount?: number;
+  paidAt?: Date;
+  personId: string;
+  amount: number;
+  note?: string | null;
 };
-type TestDocument = TestPerson | TestLoad;
+type TestDocument = TestPerson | TestPayment;
 
-describe('DashboardLoadsService', () => {
-  let service: import('./dashboard-loads.service').DashboardLoadsService;
-  let serviceToken: typeof import('./dashboard-loads.service').DashboardLoadsService;
+describe('DashboardPaymentsService', () => {
+  let service: import('./dashboard-payments.service').DashboardPaymentsService;
+  let serviceToken: typeof import('./dashboard-payments.service').DashboardPaymentsService;
   let collectionMock: ReturnType<typeof vi.fn>;
   let limitMock: ReturnType<typeof vi.fn>;
   let onSnapshotMock: ReturnType<typeof vi.fn>;
@@ -55,7 +52,7 @@ describe('DashboardLoadsService', () => {
     orderByMock = mocks.orderBy;
     queryMock = mocks.query;
     firestoreToken = (await import('@angular/fire/firestore')).Firestore;
-    serviceToken = (await import('./dashboard-loads.service')).DashboardLoadsService;
+    serviceToken = (await import('./dashboard-payments.service')).DashboardPaymentsService;
 
     collectionMock.mockClear();
     limitMock.mockClear();
@@ -73,8 +70,8 @@ describe('DashboardLoadsService', () => {
 
   function createService(
     people$: Subject<TestPerson[]>,
-    loads$: Subject<TestLoad[]>,
-  ): import('./dashboard-loads.service').DashboardLoadsService {
+    payments$: Subject<TestPayment[]>,
+  ): import('./dashboard-payments.service').DashboardPaymentsService {
     onSnapshotMock.mockImplementation(
       (
         ref: { path: string },
@@ -83,7 +80,7 @@ describe('DashboardLoadsService', () => {
       ) => {
         const source = {
           people: people$,
-          loads: loads$,
+          payments: payments$,
         }[ref.path] as Subject<TestDocument[]> | undefined;
 
         if (!source) {
@@ -112,105 +109,102 @@ describe('DashboardLoadsService', () => {
     return TestBed.inject(serviceToken);
   }
 
-  it('legge people e gli ultimi 10 loads ordinati per data decrescente', () => {
+  it('legge people e gli ultimi 10 payments ordinati per data decrescente', () => {
     const people$ = new Subject<TestPerson[]>();
-    const loads$ = new Subject<TestLoad[]>();
-    createService(people$, loads$);
+    const payments$ = new Subject<TestPayment[]>();
+    createService(people$, payments$);
 
     expect(collectionMock).toHaveBeenNthCalledWith(1, {}, 'people');
-    expect(collectionMock).toHaveBeenNthCalledWith(2, {}, 'loads');
+    expect(collectionMock).toHaveBeenNthCalledWith(2, {}, 'payments');
     expect(orderByMock).toHaveBeenCalledWith('date', 'desc');
     expect(limitMock).toHaveBeenCalledWith(10);
     expect(queryMock).toHaveBeenCalledWith(
-      { path: 'loads' },
+      { path: 'payments' },
       { type: 'orderBy', field: 'date', direction: 'desc' },
       { type: 'limit', size: 10 },
     );
   });
 
-  it('risolve pagante e breakdown in nomi persona', () => {
+  it('risolve persona, data e nota opzionale per la dashboard', () => {
     const people$ = new Subject<TestPerson[]>();
-    const loads$ = new Subject<TestLoad[]>();
-    service = createService(people$, loads$);
+    const payments$ = new Subject<TestPayment[]>();
+    service = createService(people$, payments$);
 
-    const results: import('../models/load.model').DashboardLoad[][] = [];
-    service.getLatestLoads().subscribe((loads) => results.push(loads));
+    const results: import('../models/payment.model').DashboardPayment[][] = [];
+    service.getLatestPayments().subscribe((payments) => results.push(payments));
 
     people$.next([
       { id: 'fernando', name: 'Fernando', initials: 'Fe' },
       { id: 'nino', name: 'Nino', initials: 'Ni' },
-      { id: 'fabio', name: 'Fabio', initials: 'Fa' },
     ]);
-    loads$.next([
+    payments$.next([
       {
-        id: 'load-1',
-        date: new Date('2026-02-10T10:00:00.000Z'),
-        paidByPersonId: 'fabio',
-        totalAmount: 75,
-        waterPrice: 50,
-        energyPrice: 25,
-        breakdown: [
-          { personId: 'fernando', weight: 1, amount: 25 },
-          { personId: 'nino', weight: 2, amount: 50 },
-        ],
+        id: 'payment-1',
+        date: new Date('2026-06-10T10:00:00.000Z'),
+        personId: 'fernando',
+        amount: 100,
+        note: 'Bonifico istantaneo',
+      },
+      {
+        id: 'payment-2',
+        paidAt: new Date('2026-06-08T10:00:00.000Z'),
+        personId: 'nino',
+        amount: 30,
       },
     ]);
 
     expect(results[0]).toEqual([
       {
-        id: 'load-1',
-        paidAt: new Date('2026-02-10T10:00:00.000Z'),
-        paidByPersonId: 'fabio',
-        paidByName: 'Fabio',
-        totalAmount: 75,
-        waterAmount: 50,
-        energyAmount: 25,
-        totalWeight: 3,
-        breakdown: [
-          { personId: 'fernando', personName: 'Fernando', weight: 1, cost: 25 },
-          { personId: 'nino', personName: 'Nino', weight: 2, cost: 50 },
-        ],
+        id: 'payment-1',
+        paidAt: new Date('2026-06-10T10:00:00.000Z'),
+        personId: 'fernando',
+        personName: 'Fernando',
+        personInitials: 'Fe',
+        amount: 100,
+        note: 'Bonifico istantaneo',
+      },
+      {
+        id: 'payment-2',
+        paidAt: new Date('2026-06-08T10:00:00.000Z'),
+        personId: 'nino',
+        personName: 'Nino',
+        personInitials: 'Ni',
+        amount: 30,
+        note: null,
       },
     ]);
   });
 
-  it('mantiene il fallback legacy personId/amount', () => {
+  it('mantiene fallback leggibili per persone sconosciute', () => {
     const people$ = new Subject<TestPerson[]>();
-    const loads$ = new Subject<TestLoad[]>();
-    service = createService(people$, loads$);
+    const payments$ = new Subject<TestPayment[]>();
+    service = createService(people$, payments$);
 
-    const results: import('../models/load.model').DashboardLoad[][] = [];
-    service.getLatestLoads().subscribe((loads) => results.push(loads));
+    const results: import('../models/payment.model').DashboardPayment[][] = [];
+    service.getLatestPayments().subscribe((payments) => results.push(payments));
 
-    people$.next([{ id: 'fernando', name: 'Fernando', initials: 'Fe' }]);
-    loads$.next([{ id: 'legacy-1', personId: 'fernando', amount: 45 }]);
+    people$.next([]);
+    payments$.next([{ id: 'payment-1', personId: 'ospite', amount: 12 }]);
 
     expect(results[0][0]).toMatchObject({
-      id: 'legacy-1',
-      paidByPersonId: 'fernando',
-      paidByName: 'Fernando',
-      totalAmount: 45,
-      waterAmount: 0,
-      energyAmount: 0,
-      totalWeight: 1,
-      breakdown: [
-        { personId: 'fernando', personName: 'Fernando', weight: 1, cost: 45 },
-      ],
+      personName: 'ospite',
+      personInitials: 'OS',
+      paidAt: null,
     });
   });
 
-  it('propaga errori diagnostici con la collection loads', () => {
+  it('propaga errori diagnostici con la collection payments', () => {
     const people$ = new Subject<TestPerson[]>();
-    const loads$ = new Subject<TestLoad[]>();
-    service = createService(people$, loads$);
+    const payments$ = new Subject<TestPayment[]>();
+    service = createService(people$, payments$);
 
     const errors: unknown[] = [];
-    service.getLatestLoads().subscribe({ error: (error: unknown) => errors.push(error) });
+    service.getLatestPayments().subscribe({ error: (error: unknown) => errors.push(error) });
 
-    loads$.error(new Error('permission-denied'));
+    payments$.error(new Error('permission-denied'));
 
     expect(errors[0]).toEqual(
-      new Error('Firestore collection "loads" failed: permission-denied'),
+      new Error('Firestore collection "payments" failed: permission-denied'),
     );
   });
 });

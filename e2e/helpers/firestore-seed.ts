@@ -12,7 +12,12 @@ export async function createSeedEnvironment(): Promise<SeedEnvironment> {
   });
 }
 
-export async function seedCanonicalDashboardData(testEnv: SeedEnvironment): Promise<void> {
+export async function seedCanonicalDashboardData(
+  testEnv: SeedEnvironment,
+  options: { includePayments?: boolean } = {},
+): Promise<void> {
+  const includePayments = options.includePayments ?? true;
+
   await testEnv.withSecurityRulesDisabled(async (ctx) => {
     const db = ctx.firestore();
 
@@ -70,6 +75,66 @@ export async function seedCanonicalDashboardData(testEnv: SeedEnvironment): Prom
         ],
       }),
     ]);
+
+    if (includePayments) {
+      await Promise.all([
+        addDoc(collection(db, 'payments'), {
+          date: new Date('2026-06-10T10:00:00.000Z'),
+          personId: 'fernando',
+          amount: 100,
+          note: 'Bonifico istantaneo',
+        }),
+        addDoc(collection(db, 'payments'), {
+          date: new Date('2026-06-09T10:00:00.000Z'),
+          personId: 'fabio',
+          amount: 120,
+          note: 'Quota carico',
+        }),
+        addDoc(collection(db, 'payments'), {
+          date: new Date('2026-06-06T10:00:00.000Z'),
+          personId: 'nino',
+          amount: 30,
+        }),
+        addDoc(collection(db, 'payments'), {
+          date: new Date('2026-06-03T10:00:00.000Z'),
+          personId: 'daniele',
+          amount: 25,
+          note: 'Contanti',
+        }),
+        addDoc(collection(db, 'payments'), {
+          date: new Date('2026-05-29T10:00:00.000Z'),
+          personId: 'fernando',
+          amount: 40,
+        }),
+        addDoc(collection(db, 'payments'), {
+          date: new Date('2026-05-25T10:00:00.000Z'),
+          personId: 'fabio',
+          amount: 45,
+          note: 'Saldo precedente',
+        }),
+        addDoc(collection(db, 'payments'), {
+          date: new Date('2026-05-21T10:00:00.000Z'),
+          personId: 'nino',
+          amount: 60,
+        }),
+        addDoc(collection(db, 'payments'), {
+          date: new Date('2026-05-18T10:00:00.000Z'),
+          personId: 'daniele',
+          amount: 15,
+          note: 'Rimborso parziale',
+        }),
+        addDoc(collection(db, 'payments'), {
+          date: new Date('2026-05-12T10:00:00.000Z'),
+          personId: 'fernando',
+          amount: 35,
+        }),
+        addDoc(collection(db, 'payments'), {
+          date: new Date('2026-05-08T10:00:00.000Z'),
+          personId: 'fabio',
+          amount: 20,
+        }),
+      ]);
+    }
   });
 }
 
@@ -88,6 +153,18 @@ export async function insertRealtimeLoad(testEnv: SeedEnvironment): Promise<void
         { personId: 'daniele', weight: 3, amount: 27 },
         { personId: 'fabio', weight: 3, amount: 27 },
       ],
+    });
+  });
+}
+
+export async function insertRealtimePayment(testEnv: SeedEnvironment): Promise<void> {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    const db = ctx.firestore();
+    await addDoc(collection(db, 'payments'), {
+      date: new Date('2026-06-11T10:00:00.000Z'),
+      personId: 'daniele',
+      amount: 55,
+      note: 'Pagamento appena registrato',
     });
   });
 }

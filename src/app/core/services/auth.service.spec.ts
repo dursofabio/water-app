@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { AuthService } from './auth.service';
 import { Auth } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 
@@ -61,17 +60,20 @@ const getOnAuthStateChangedMock = async () => {
 };
 
 describe('AuthService (US-006)', () => {
-  let service: AuthService;
+  let service: import('./auth.service').AuthService;
+  let serviceToken: typeof import('./auth.service').AuthService;
   let signInWithPopupMock: ReturnType<typeof vi.fn>;
   let signOutMock: ReturnType<typeof vi.fn>;
   let getDocMock: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
+    vi.resetModules();
     capturedAuthStateCallback = null;
 
     signInWithPopupMock = await getSignInWithPopupMock();
     signOutMock = await getSignOutMock();
     getDocMock = await getGetDocMock();
+    serviceToken = (await import('./auth.service')).AuthService;
 
     signInWithPopupMock.mockReset();
     signOutMock.mockReset();
@@ -79,13 +81,13 @@ describe('AuthService (US-006)', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        AuthService,
+        serviceToken,
         { provide: Auth, useValue: {} },
         { provide: Firestore, useValue: {} },
       ],
     });
 
-    service = TestBed.inject(AuthService);
+    service = TestBed.inject(serviceToken);
   });
 
   it('inizializza con currentUser null e isAdmin false', () => {
@@ -156,15 +158,18 @@ describe('AuthService (US-006)', () => {
 });
 
 describe('AuthService — isInitialized e onAuthStateChanged (US-007)', () => {
-  let service: AuthService;
+  let service: import('./auth.service').AuthService;
+  let serviceToken: typeof import('./auth.service').AuthService;
   let getDocMock: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
+    vi.resetModules();
     capturedAuthStateCallback = null;
 
     const signInWithPopupMock = await getSignInWithPopupMock();
     const signOutMock = await getSignOutMock();
     getDocMock = await getGetDocMock();
+    serviceToken = (await import('./auth.service')).AuthService;
 
     signInWithPopupMock.mockReset();
     signOutMock.mockReset();
@@ -172,13 +177,13 @@ describe('AuthService — isInitialized e onAuthStateChanged (US-007)', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        AuthService,
+        serviceToken,
         { provide: Auth, useValue: {} },
         { provide: Firestore, useValue: {} },
       ],
     });
 
-    service = TestBed.inject(AuthService);
+    service = TestBed.inject(serviceToken);
   });
 
   it('isInitialized è false prima che onAuthStateChanged venga invocato', () => {

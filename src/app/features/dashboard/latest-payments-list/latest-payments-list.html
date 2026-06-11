@@ -1,0 +1,58 @@
+<section class="payments-section" aria-label="Ultimi pagamenti">
+  <div class="section-header section-header--payments">
+    <div>
+      <h2 class="section-title section-title--sm">Ultimi pagamenti</h2>
+      <span class="section-subtitle">Gli ultimi 10 incassi registrati.</span>
+    </div>
+    @if (!paymentsResource().isLoading() && paymentsResource().status() !== 'error') {
+      <span class="count-badge">{{ paymentCountLabel() }}</span>
+    }
+  </div>
+
+  @if (paymentsResource().isLoading()) {
+    <div class="payments-state" role="status" aria-live="polite" aria-busy="true">
+      <span class="state-title">Caricamento ultimi pagamenti</span>
+      <span class="state-detail">Recupero incassi registrati e persone collegate.</span>
+    </div>
+  } @else if (paymentsResource().status() === 'error') {
+    <div class="payments-state payments-state--error" role="alert">
+      <span class="state-title">Non riesco a caricare gli ultimi pagamenti.</span>
+      <span class="state-detail">{{ errorMessage() }}</span>
+      <button type="button" class="state-action" (click)="retryPayments()">Riprova</button>
+    </div>
+  } @else if (latestPayments().length === 0) {
+    <div class="payments-state" role="status">
+      <span class="empty-mark" aria-hidden="true">€</span>
+      <span class="state-title">Nessun pagamento registrato.</span>
+      <span class="state-detail">Quando Fabio registra il primo pagamento, comparirà qui con data, persona, importo e nota.</span>
+    </div>
+  } @else {
+    <div class="payments-panel">
+      <div class="payments-head" aria-hidden="true">
+        <span>Data</span>
+        <span>Persona</span>
+        <span>Importo</span>
+      </div>
+
+      <div class="payments-list" role="list" aria-label="Ultimi pagamenti">
+        @for (payment of latestPayments(); track trackPayment($index, payment)) {
+          <article class="payment-row" role="listitem">
+            <time class="payment-date" [dateTime]="isoDate(payment)">
+              {{ formattedDate(payment) }}
+            </time>
+            <span class="payer">
+              <span class="payer-avatar" aria-hidden="true">{{ payment.personInitials }}</span>
+              <span class="payer-main">
+                <strong>{{ payment.personName }}</strong>
+                @if (payment.note) {
+                  <small>{{ payment.note }}</small>
+                }
+              </span>
+            </span>
+            <strong class="payment-amount">{{ formattedCurrency(payment.amount) }}</strong>
+          </article>
+        }
+      </div>
+    </div>
+  }
+</section>

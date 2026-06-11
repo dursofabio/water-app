@@ -61,9 +61,23 @@ await testEnv.withSecurityRulesDisabled(async (ctx) => {
 
   console.log('Inserimento pagamenti...');
   await Promise.all([
-    addDoc(collection(db, 'payments'), { personId: 'fernando', amount: 100.0 }),
-    addDoc(collection(db, 'payments'), { personId: 'nino', amount: 30.0 }),
-    addDoc(collection(db, 'payments'), { personId: 'fabio', amount: 120.0 }),
+    addDoc(collection(db, 'payments'), {
+      date: new Date('2026-06-10T10:00:00.000Z'),
+      personId: 'fernando',
+      amount: 100.0,
+      note: 'Bonifico istantaneo',
+    }),
+    addDoc(collection(db, 'payments'), {
+      date: new Date('2026-06-06T10:00:00.000Z'),
+      personId: 'nino',
+      amount: 30.0,
+    }),
+    addDoc(collection(db, 'payments'), {
+      date: new Date('2026-06-09T10:00:00.000Z'),
+      personId: 'fabio',
+      amount: 120.0,
+      note: 'Quota carico',
+    }),
   ]);
 });
 

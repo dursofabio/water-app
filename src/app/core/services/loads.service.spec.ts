@@ -1,7 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { Firestore } from '@angular/fire/firestore';
-import { LoadsService } from './loads.service';
 
 /**
  * Unit tests for LoadsService — US-008
@@ -40,20 +38,25 @@ vi.mock('@angular/fire/firestore', () => {
 });
 
 describe('LoadsService', () => {
-  let service: LoadsService;
+  let service: import('./loads.service').LoadsService;
+  let serviceToken: typeof import('./loads.service').LoadsService;
+  let firestoreToken: unknown;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    vi.resetModules();
     capturedCollection = undefined;
     capturedDocument = undefined;
+    firestoreToken = (await import('@angular/fire/firestore')).Firestore;
+    serviceToken = (await import('./loads.service')).LoadsService;
 
     TestBed.configureTestingModule({
       providers: [
-        LoadsService,
-        { provide: Firestore, useValue: {} },
+        serviceToken,
+        { provide: firestoreToken, useValue: {} },
       ],
     });
 
-    service = TestBed.inject(LoadsService);
+    service = TestBed.inject(serviceToken);
   });
 
   it('should be created', () => {

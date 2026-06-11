@@ -5,6 +5,7 @@
 :host {
   --color-ocean-400:   #22d3ee;
   --color-ocean-300:   #67e8f9;
+  --color-payment:     #facc15;
 
   --color-debt-strong: #ef4444;
   --color-debt-mid:    #f97316;
@@ -15,8 +16,10 @@
   --surface-card:       #0b1e28;
   --surface-card-hover: #0e2737;
   --surface-overlay:    rgba(6, 176, 212, 0.06);
+  --surface-payment:    rgba(250, 204, 21, 0.07);
   --border-subtle:      rgba(103, 232, 249, 0.10);
   --border-card:        rgba(103, 232, 249, 0.14);
+  --border-payment:     rgba(250, 204, 21, 0.22);
 
   --text-primary:   #e0f6fa;
   --text-secondary: #7fbfcc;
@@ -243,9 +246,20 @@
   border-color: var(--color-ocean-400);
 }
 
+.ledger-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
 @media (max-width: 900px) {
   .balance-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ledger-grid {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -1,8 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const outputDir = process.env.PLAYWRIGHT_OUTPUT_DIR ?? 'docs/test-results/US-005';
+
 export default defineConfig({
   testDir: './e2e',
-  outputDir: 'docs/test-results/US-006',
+  outputDir,
+  workers: 1,
   timeout: 60_000,
   expect: {
     timeout: 10_000,

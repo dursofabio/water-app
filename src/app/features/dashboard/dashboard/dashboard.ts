@@ -3,8 +3,10 @@ import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { BalanceService } from '../services/balance.service';
 import { DashboardLoadsService } from '../services/dashboard-loads.service';
+import { DashboardPaymentsService } from '../services/dashboard-payments.service';
 import { BalanceCard } from '../balance-card/balance-card';
 import { LatestLoadsList } from '../latest-loads-list/latest-loads-list';
+import { LatestPaymentsList } from '../latest-payments-list/latest-payments-list';
 
 /**
  * DashboardComponent — US-003 / US-006
@@ -19,17 +21,19 @@ import { LatestLoadsList } from '../latest-loads-list/latest-loads-list';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [DatePipe, BalanceCard, LatestLoadsList],
+  imports: [DatePipe, BalanceCard, LatestLoadsList, LatestPaymentsList],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
 export class Dashboard {
   private readonly balanceService = inject(BalanceService);
   private readonly dashboardLoadsService = inject(DashboardLoadsService);
+  private readonly dashboardPaymentsService = inject(DashboardPaymentsService);
   private readonly route = inject(ActivatedRoute);
 
   readonly balancesResource = this.balanceService.balancesResource;
   readonly latestLoadsResource = this.dashboardLoadsService.latestLoadsResource;
+  readonly latestPaymentsResource = this.dashboardPaymentsService.latestPaymentsResource;
   readonly now = new Date();
 
   readonly showDeniedBanner = computed(() => {

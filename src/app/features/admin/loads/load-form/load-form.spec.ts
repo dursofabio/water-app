@@ -54,7 +54,7 @@ class MockLoadsService {
   addLoad = vi.fn().mockResolvedValue(undefined);
 }
 
-describe('LoadFormComponent (US-008)', () => {
+describe('LoadFormComponent (US-008/US-009)', () => {
   let component: LoadFormComponent;
   let fixture: ComponentFixture<LoadFormComponent>;
   let loadsService: MockLoadsService;
@@ -140,6 +140,16 @@ describe('LoadFormComponent (US-008)', () => {
   });
 
   describe('Reactive preview', () => {
+    it('renders one preview row for each person', () => {
+      const el = fixture.nativeElement as HTMLElement;
+      const rows = el.querySelectorAll('.preview-breakdown-row');
+      expect(rows.length).toBe(MOCK_BALANCES.length);
+      expect(el.textContent).toContain('Fabio');
+      expect(el.textContent).toContain('Fernando');
+      expect(el.textContent).toContain('Nino');
+      expect(el.textContent).toContain('Daniele');
+    });
+
     it('calculates totalWeight as sum of all weights', () => {
       // 4 persons × 1 = 4
       expect(component.totalWeight()).toBe(4);
@@ -170,9 +180,39 @@ describe('LoadFormComponent (US-008)', () => {
       expect(breakdown[0].cost).toBeCloseTo(13.75, 3);
     });
 
+    it('updates total preview immediately when energyPrice changes', () => {
+      component.updateEnergyPrice(15);
+      expect(component.expectedTotal()).toBe(50);
+      expect(component.totalAmount()).toBeCloseTo(50, 3);
+    });
+
     it('updates totalAmount reactively', () => {
       // 4 × 1 kg, pricePerUnit = 45 → totalAmount = 45
       expect(component.totalAmount()).toBeCloseTo(45, 3);
+    });
+
+    it('keeps preview total aligned with water plus energy when weights are positive', () => {
+      component.updateWeight(0, 2.5);
+      component.updateWaterPrice(42.25);
+      component.updateEnergyPrice(12.75);
+
+      expect(component.expectedTotal()).toBeCloseTo(55, 3);
+      expect(component.totalAmount()).toBeCloseTo(component.expectedTotal(), 3);
+      expect(component.previewTotalMatchesExpected()).toBe(true);
+    });
+
+    it('shows a warning and placeholders instead of numeric costs when totalWeight is 0', () => {
+      component.weights().forEach((_, i) => component.updateWeight(i, 0));
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement as HTMLElement;
+      const warning = el.querySelector('.preview-warning');
+      const costs = Array.from(el.querySelectorAll('.preview-cost')).map((node) => node.textContent?.trim());
+
+      expect(component.canShowPreviewValues()).toBe(false);
+      expect(warning?.textContent).toContain('La somma dei pesi è 0');
+      expect(costs.every((text) => text === '—')).toBe(true);
+      expect(el.textContent).toContain('Totale non calcolabile');
     });
   });
 
@@ -209,6 +249,16 @@ describe('LoadFormComponent (US-008)', () => {
     it('submit button is disabled when form is invalid', () => {
       component.paidByPersonId.set('');
       fixture.detectChanges();
+      const el = fixture.nativeElement as HTMLElement;
+      const btn = el.querySelector('button[type="submit"]') as HTMLButtonElement;
+      expect(btn.disabled).toBe(true);
+    });
+
+    it('submit button remains disabled when totalWeight is 0', () => {
+      component.paidByPersonId.set('fabio');
+      component.weights().forEach((_, i) => component.updateWeight(i, 0));
+      fixture.detectChanges();
+
       const el = fixture.nativeElement as HTMLElement;
       const btn = el.querySelector('button[type="submit"]') as HTMLButtonElement;
       expect(btn.disabled).toBe(true);
