@@ -21,20 +21,19 @@ import { AuthService } from '../../core/services/auth.service';
       </header>
       <main class="admin-content">
         <nav class="admin-nav">
-          <a routerLink="/admin/carichi/nuovo" class="admin-nav__link">
+          <a routerLink="/admin/carichi" class="admin-nav__link">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="16"/>
-              <line x1="8" y1="12" x2="16" y2="12"/>
+              <path d="M12 2a10 10 0 0 1 0 20A10 10 0 0 1 12 2z"/>
+              <path d="M12 8v4l2 2"/>
             </svg>
-            Nuovo carico cisterna
+            Carichi
           </a>
-          <a routerLink="/admin/pagamenti/nuovo" class="admin-nav__link">
+          <a routerLink="/admin/pagamenti" class="admin-nav__link">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
               <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
               <line x1="1" y1="10" x2="23" y2="10"/>
             </svg>
-            Nuovo pagamento
+            Pagamenti
           </a>
           <a routerLink="/admin/configurazione" class="admin-nav__link">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">

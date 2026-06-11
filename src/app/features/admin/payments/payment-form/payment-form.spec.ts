@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { of } from 'rxjs';
 import { PaymentFormComponent } from './payment-form';
-import { PaymentsService } from '../../../../core/services/payments.service';
+import { PaymentsService, PaymentRecord } from '../../../../core/services/payments.service';
 import { BalanceService } from '../../../dashboard/services/balance.service';
 import { PersonBalance } from '../../../dashboard/models/balance.model';
 
@@ -42,6 +43,8 @@ class MockBalanceService {
 
 class MockPaymentsService {
   addPayment = vi.fn().mockResolvedValue(undefined);
+  updatePayment = vi.fn().mockResolvedValue(undefined);
+  getPaymentById = vi.fn().mockReturnValue(of(null));
 }
 
 describe('PaymentFormComponent (US-011)', () => {
@@ -304,5 +307,158 @@ describe('PaymentFormComponent (US-011)', () => {
       const overlay = el.querySelector('.success-overlay');
       expect(overlay?.textContent).toContain('Nino');
     });
+  });
+});
+
+// ─── Edit mode tests (US-012) ─────────────────────────────────────────────────
+
+const MOCK_PAYMENT_RECORD: PaymentRecord = {
+  id: 'payment-abc',
+  personId: 'fernando',
+  amount: 75,
+  date: new Date('2026-05-15'),
+  note: 'Acconto maggio',
+};
+
+function makeActivatedRoute(paymentId: string | null) {
+  return {
+    snapshot: {
+      paramMap: {
+        get: (key: string) => (key === 'paymentId' ? paymentId : null),
+      },
+    },
+  };
+}
+
+describe('PaymentFormComponent — edit mode (US-012)', () => {
+  let component: PaymentFormComponent;
+  let fixture: ComponentFixture<PaymentFormComponent>;
+  let paymentsService: MockPaymentsService;
+
+  beforeEach(async () => {
+    paymentsService = new MockPaymentsService();
+    paymentsService.getPaymentById = vi.fn().mockReturnValue(of(MOCK_PAYMENT_RECORD));
+
+    await TestBed.configureTestingModule({
+      imports: [PaymentFormComponent],
+      providers: [
+        provideRouter([]),
+        { provide: BalanceService, useClass: MockBalanceService },
+        { provide: PaymentsService, useValue: paymentsService },
+        { provide: ActivatedRoute, useValue: makeActivatedRoute('payment-abc') },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(PaymentFormComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  });
+
+  it('should create the component in edit mode', () => {
+    expect(component).toBeTruthy();
+    expect(component.isEditMode()).toBe(true);
+  });
+
+  it('sets paymentId from route param', () => {
+    expect(component.paymentId()).toBe('payment-abc');
+  });
+
+  it('prefills date from the existing payment', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(component.date()).toBe('2026-05-15');
+  });
+
+  it('prefills paidByPersonId from the existing payment', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(component.paidByPersonId()).toBe('fernando');
+  });
+
+  it('prefills amount from the existing payment', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(component.amount()).toBe(75);
+  });
+
+  it('prefills note from the existing payment', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(component.note()).toBe('Acconto maggio');
+  });
+
+  it('calls updatePayment (not addPayment) on submit', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    await component.submit();
+
+    expect(paymentsService.updatePayment).toHaveBeenCalledWith(
+      'payment-abc',
+      expect.objectContaining({ personId: 'fernando', amount: 75 }),
+    );
+    expect(paymentsService.addPayment).not.toHaveBeenCalled();
+  });
+
+  it('navigateToAdmin goes to /admin/pagamenti', () => {
+    const router = TestBed.inject(Router);
+    const spy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    component.navigateToAdmin();
+
+    expect(spy).toHaveBeenCalledWith(['/admin/pagamenti']);
+  });
+
+  it('navigateBack goes to /admin/pagamenti', () => {
+    const router = TestBed.inject(Router);
+    const spy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    component.navigateBack();
+
+    expect(spy).toHaveBeenCalledWith(['/admin/pagamenti']);
+  });
+});
+
+describe('PaymentFormComponent — create mode regression (US-012)', () => {
+  let component: PaymentFormComponent;
+  let fixture: ComponentFixture<PaymentFormComponent>;
+  let paymentsService: MockPaymentsService;
+
+  beforeEach(async () => {
+    paymentsService = new MockPaymentsService();
+
+    await TestBed.configureTestingModule({
+      imports: [PaymentFormComponent],
+      providers: [
+        provideRouter([]),
+        { provide: BalanceService, useClass: MockBalanceService },
+        { provide: PaymentsService, useValue: paymentsService },
+        // No paymentId in route → create mode
+        { provide: ActivatedRoute, useValue: makeActivatedRoute(null) },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(PaymentFormComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('isEditMode is false when no paymentId in route', () => {
+    expect(component.isEditMode()).toBe(false);
+  });
+
+  it('calls addPayment (not updatePayment) on submit in create mode', async () => {
+    component.selectPerson('fabio');
+    component.updateAmount(50);
+    component.date.set('2026-06-11');
+
+    await component.submit();
+
+    expect(paymentsService.addPayment).toHaveBeenCalledWith(
+      expect.objectContaining({ personId: 'fabio', amount: 50 }),
+    );
+    expect(paymentsService.updatePayment).not.toHaveBeenCalled();
   });
 });

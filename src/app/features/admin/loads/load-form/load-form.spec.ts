@@ -1,10 +1,11 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { of } from 'rxjs';
 import { LoadFormComponent } from './load-form';
 import { ConfigService } from '../../../../core/services/config.service';
-import { LoadsService } from '../../../../core/services/loads.service';
+import { LoadsService, LoadRecord } from '../../../../core/services/loads.service';
 import { BalanceService } from '../../../dashboard/services/balance.service';
 import { DEFAULT_PRICES } from '../../../../core/models/config.model';
 import { PersonBalance } from '../../../dashboard/models/balance.model';
@@ -52,6 +53,8 @@ class MockConfigService {
 
 class MockLoadsService {
   addLoad = vi.fn().mockResolvedValue(undefined);
+  updateLoad = vi.fn().mockResolvedValue(undefined);
+  getLoadById = vi.fn().mockReturnValue(of(null));
 }
 
 describe('LoadFormComponent (US-008/US-009)', () => {
@@ -314,5 +317,171 @@ describe('LoadFormComponent (US-008/US-009)', () => {
       await component.submit();
       expect(loadsService.addLoad).not.toHaveBeenCalled();
     });
+  });
+});
+
+// ─── Edit mode tests (US-010) ─────────────────────────────────────────────────
+
+const MOCK_LOAD_RECORD: LoadRecord = {
+  id: 'load-abc',
+  date: new Date('2026-06-11'),
+  paidByPersonId: 'fernando',
+  waterPrice: 60,
+  energyPrice: 15,
+  totalAmount: 75,
+  totalWeight: 3,
+  breakdown: [
+    { personId: 'fabio', weight: 2, cost: 50 },
+    { personId: 'fernando', weight: 1, cost: 25 },
+    { personId: 'nino', weight: 0, cost: 0 },
+    { personId: 'daniele', weight: 0, cost: 0 },
+  ],
+};
+
+function makeActivatedRoute(loadId: string | null) {
+  return {
+    snapshot: {
+      paramMap: {
+        get: (key: string) => (key === 'loadId' ? loadId : null),
+      },
+    },
+  };
+}
+
+describe('LoadFormComponent — edit mode (US-010)', () => {
+  let component: LoadFormComponent;
+  let fixture: ComponentFixture<LoadFormComponent>;
+  let loadsService: MockLoadsService;
+
+  beforeEach(async () => {
+    loadsService = new MockLoadsService();
+    loadsService.getLoadById = vi.fn().mockReturnValue(of(MOCK_LOAD_RECORD));
+
+    await TestBed.configureTestingModule({
+      imports: [LoadFormComponent],
+      providers: [
+        provideRouter([]),
+        { provide: BalanceService, useClass: MockBalanceService },
+        { provide: ConfigService, useClass: MockConfigService },
+        { provide: LoadsService, useValue: loadsService },
+        { provide: ActivatedRoute, useValue: makeActivatedRoute('load-abc') },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LoadFormComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  });
+
+  it('should create the component in edit mode', () => {
+    expect(component).toBeTruthy();
+    expect(component.isEditMode()).toBe(true);
+  });
+
+  it('sets loadId from route param', () => {
+    expect(component.loadId()).toBe('load-abc');
+  });
+
+  it('prefills date from the existing load', async () => {
+    // allow rxResource and effect to process
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(component.date()).toBe('2026-06-11');
+  });
+
+  it('prefills paidByPersonId from the existing load', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(component.paidByPersonId()).toBe('fernando');
+  });
+
+  it('prefills waterPrice from the existing load', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(component.waterPrice()).toBe(60);
+  });
+
+  it('prefills energyPrice from the existing load', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(component.energyPrice()).toBe(15);
+  });
+
+  it('prefills weights from the existing breakdown', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const fabioEntry = component.weights().find((w) => w.personId === 'fabio');
+    expect(fabioEntry?.weight).toBe(2);
+  });
+
+  it('shows "Modifica carico" title in template', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.top-bar__title')?.textContent?.trim()).toBe('Modifica carico');
+  });
+
+  it('shows "Salva modifiche" on submit button', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    const btn = el.querySelector('button[type="submit"]');
+    expect(btn?.textContent).toContain('Salva modifiche');
+  });
+
+  it('calls updateLoad (not addLoad) on submit', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    component.paidByPersonId.set('fabio');
+    await component.submit();
+
+    expect(loadsService.updateLoad).toHaveBeenCalledWith('load-abc', expect.objectContaining({ paidByPersonId: 'fabio' }));
+    expect(loadsService.addLoad).not.toHaveBeenCalled();
+  });
+
+  it('navigateToAdmin goes to /admin/carichi', () => {
+    const router = TestBed.inject(Router);
+    const spy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    component.navigateToAdmin();
+
+    expect(spy).toHaveBeenCalledWith(['/admin/carichi']);
+  });
+});
+
+describe('LoadFormComponent — not-found state (US-010)', () => {
+  let component: LoadFormComponent;
+  let fixture: ComponentFixture<LoadFormComponent>;
+
+  beforeEach(async () => {
+    const loadsService = new MockLoadsService();
+    loadsService.getLoadById = vi.fn().mockReturnValue(of(null));
+
+    await TestBed.configureTestingModule({
+      imports: [LoadFormComponent],
+      providers: [
+        provideRouter([]),
+        { provide: BalanceService, useClass: MockBalanceService },
+        { provide: ConfigService, useClass: MockConfigService },
+        { provide: LoadsService, useValue: loadsService },
+        { provide: ActivatedRoute, useValue: makeActivatedRoute('missing-id') },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LoadFormComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  });
+
+  it('shows not-found message when document is null', async () => {
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const errorEl = el.querySelector('.save-error');
+    expect(errorEl?.textContent).toContain('non trovato');
   });
 });

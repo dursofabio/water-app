@@ -1,0 +1,184 @@
+<div class="app-shell">
+
+  <!-- Top bar -->
+  <header class="top-bar">
+    <div class="top-bar__inner">
+      <a routerLink="/admin" class="back-btn" aria-label="Torna all'area admin">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Admin
+      </a>
+      <span class="top-bar__title">Carichi</span>
+      <div class="brand" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+          <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 3 16 3z" fill="url(#drop-ll)"/>
+          <defs>
+            <linearGradient id="drop-ll" x1="16" y1="3" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7dd3fc"/>
+              <stop offset="100%" stop-color="#0e7490"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="brand__name">AcquaApp</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content">
+
+    <!-- Hero -->
+    <div class="page-hero">
+      <div>
+        <p class="page-eyebrow">Lista admin</p>
+        <h1 class="page-title">Carichi cisterna</h1>
+        <p class="page-subtitle">Modifica pesi e prezzi o cancella un carico dopo conferma esplicita.</p>
+      </div>
+      <a routerLink="/admin/carichi/nuovo" class="btn-primary" aria-label="Aggiungi nuovo carico">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="16"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        Nuovo carico
+      </a>
+    </div>
+
+    <!-- Loading state -->
+    @if (loadsResource.isLoading()) {
+      <div class="state-container" aria-label="Caricamento carichi in corso">
+        <mat-spinner diameter="32" color="accent"></mat-spinner>
+        <p>Caricamento carichi…</p>
+      </div>
+    }
+
+    <!-- Error state -->
+    @if (loadsResource.error()) {
+      <div class="error-banner" role="alert">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        Errore nel caricamento dei carichi. Riprova più tardi.
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (!loadsResource.isLoading() && !loadsResource.error() && (loadsResource.value()?.length ?? 0) === 0) {
+      <div class="state-container empty" aria-label="Nessun carico presente">
+        <svg width="40" height="40" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 3 16 3z" fill="rgba(34,211,238,0.12)" stroke="rgba(34,211,238,0.25)" stroke-width="1.5"/>
+        </svg>
+        <p>Nessun carico registrato</p>
+        <a routerLink="/admin/carichi/nuovo" class="btn-primary">Registra il primo carico</a>
+      </div>
+    }
+
+    <!-- Loads list -->
+    @if (!loadsResource.isLoading() && (loadsResource.value()?.length ?? 0) > 0) {
+      <section class="loads-list" aria-label="Lista carichi amministratore">
+        @for (load of loadsResource.value()!; track load.id) {
+          <article class="load-row">
+            <div class="date-stack" aria-hidden="true">
+              <span>{{ formatDate(load.date).day }}</span>
+              <small>{{ formatDate(load.date).month }}</small>
+            </div>
+
+            <div class="load-main">
+              <div class="load-head">
+                <h2>Carico cisterna</h2>
+                <strong>€{{ load.totalAmount.toFixed(2) }}</strong>
+              </div>
+              <p>
+                Pagato da {{ getPersonName(load.paidByPersonId) }} ·
+                acqua €{{ load.waterPrice.toFixed(2) }} ·
+                energia €{{ load.energyPrice.toFixed(2) }}
+              </p>
+              <div class="mini-breakdown" aria-label="Ripartizione pesi">
+                @for (item of load.breakdown; track item.personId) {
+                  @if (item.weight > 0) {
+                    <span>{{ getPersonInitials(item.personId) }} {{ item.weight }} kg</span>
+                  }
+                }
+              </div>
+            </div>
+
+            <div class="actions" [attr.aria-label]="'Azioni carico del ' + formatDate(load.date).day + ' ' + formatDate(load.date).month">
+              <a
+                class="icon-btn"
+                [routerLink]="['/admin/carichi', load.id]"
+                [attr.aria-label]="'Modifica carico del ' + formatDate(load.date).day + ' ' + formatDate(load.date).month"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </a>
+              <button
+                class="icon-btn danger"
+                type="button"
+                (click)="openDeleteDialog(load.id)"
+                [attr.aria-label]="'Cancella carico del ' + formatDate(load.date).day + ' ' + formatDate(load.date).month"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+              </button>
+            </div>
+          </article>
+        }
+      </section>
+    }
+
+  </main>
+</div>
+
+<!-- Delete confirmation dialog -->
+@if (pendingDeleteId()) {
+  <div
+    class="dialog-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="dialog-title"
+    (keydown.escape)="cancelDelete()"
+  >
+    <section class="dialog">
+      <p class="dialog-eyebrow">Conferma richiesta</p>
+      <h2 id="dialog-title">Cancellare questo carico?</h2>
+      <p class="dialog-desc">
+        Il carico sarà eliminato da Firestore e la dashboard ricalcolerà subito i saldi dalle collection aggiornate.
+      </p>
+
+      @if (deleteError()) {
+        <div class="delete-error" role="alert">{{ deleteError() }}</div>
+      }
+
+      <div class="dialog-actions">
+        <button
+          class="btn-secondary"
+          type="button"
+          (click)="cancelDelete()"
+          [disabled]="isDeleting()"
+        >
+          Annulla
+        </button>
+        <button
+          class="btn-danger"
+          type="button"
+          (click)="confirmDelete()"
+          [disabled]="isDeleting()"
+          aria-describedby="dialog-title"
+        >
+          @if (isDeleting()) {
+            <mat-spinner diameter="16" color="warn"></mat-spinner>
+            Cancellazione…
+          } @else {
+            Cancella carico
+          }
+        </button>
+      </div>
+    </section>
+  </div>
+}

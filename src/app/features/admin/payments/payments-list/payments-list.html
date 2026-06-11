@@ -1,0 +1,191 @@
+<div class="app-shell">
+
+  <!-- Top bar -->
+  <header class="top-bar">
+    <div class="top-bar__inner">
+      <a routerLink="/admin" class="back-btn" aria-label="Torna all'area admin">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Admin
+      </a>
+      <span class="top-bar__title">Pagamenti</span>
+      <div class="brand" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+          <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 3 16 3z" fill="url(#drop-pl)"/>
+          <defs>
+            <linearGradient id="drop-pl" x1="16" y1="3" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7dd3fc"/>
+              <stop offset="100%" stop-color="#0e7490"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="brand__name">AcquaApp</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content">
+
+    <!-- Page header -->
+    <div class="page-hero">
+      <div>
+        <p class="page-eyebrow">EP-004 · Gestione pagamenti</p>
+        <h1 class="page-title">Pagamenti</h1>
+        <p class="page-subtitle">Modifica o cancella i pagamenti registrati. Le modifiche si riflettono subito sui saldi in dashboard.</p>
+      </div>
+      <a routerLink="/admin/pagamenti/nuovo" class="btn-primary" aria-label="Registra nuovo pagamento">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Nuovo pagamento
+      </a>
+    </div>
+
+    <!-- Loading state -->
+    @if (paymentsResource.isLoading()) {
+      <div class="state-container" aria-label="Caricamento pagamenti in corso">
+        <mat-spinner diameter="32" color="accent"></mat-spinner>
+        <p>Caricamento pagamenti…</p>
+      </div>
+    }
+
+    <!-- Error state -->
+    @if (paymentsResource.error()) {
+      <div class="error-banner" role="alert">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        Errore nel caricamento dei pagamenti. Riprova più tardi.
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (!paymentsResource.isLoading() && !paymentsResource.error() && (paymentsResource.value()?.length ?? 0) === 0) {
+      <div class="state-container empty" aria-label="Nessun pagamento presente">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2" y="5" width="20" height="14" rx="2" fill="rgba(34,211,238,0.12)" stroke="rgba(34,211,238,0.25)" stroke-width="1.5"/>
+          <line x1="2" y1="10" x2="22" y2="10" stroke="rgba(34,211,238,0.25)" stroke-width="1.5"/>
+        </svg>
+        <p>Nessun pagamento registrato</p>
+        <a routerLink="/admin/pagamenti/nuovo" class="btn-primary">Registra il primo pagamento</a>
+      </div>
+    }
+
+    <!-- Payments list -->
+    @if (!paymentsResource.isLoading() && (paymentsResource.value()?.length ?? 0) > 0) {
+      <section class="payments-list" aria-label="Lista pagamenti">
+        @for (payment of paymentsResource.value()!; track payment.id) {
+          <article class="payment-row">
+            <div class="date-block" aria-hidden="true">
+              <span class="date-block__day">{{ formatDate(payment.date).day }}</span>
+              <span class="date-block__month">{{ formatDate(payment.date).month }}</span>
+            </div>
+
+            <span class="avatar" [attr.title]="getPersonName(payment.personId)">
+              {{ getPersonInitials(payment.personId) }}
+            </span>
+
+            <div class="payment-row__info">
+              <span class="payment-row__name">{{ getPersonName(payment.personId) }}</span>
+              <span class="payment-row__note">{{ payment.note || '—' }}</span>
+            </div>
+
+            <span class="payment-row__amount">€{{ formatAmount(payment.amount) }}</span>
+
+            <div class="payment-row__actions" [attr.aria-label]="'Azioni pagamento del ' + formatDate(payment.date).day + ' ' + formatDate(payment.date).month">
+              <a
+                class="icon-btn"
+                [routerLink]="['/admin/pagamenti', payment.id]"
+                [attr.aria-label]="'Modifica pagamento ' + getPersonName(payment.personId) + ' del ' + formatDate(payment.date).day + ' ' + formatDate(payment.date).month"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </a>
+              <button
+                class="icon-btn danger"
+                type="button"
+                (click)="openDeleteDialog(payment.id)"
+                [attr.aria-label]="'Cancella pagamento ' + getPersonName(payment.personId) + ' del ' + formatDate(payment.date).day + ' ' + formatDate(payment.date).month"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                  <path d="M10 11v6M14 11v6"/>
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+              </button>
+            </div>
+          </article>
+        }
+      </section>
+    }
+
+  </main>
+</div>
+
+<!-- Delete confirmation dialog -->
+@if (pendingDeleteId()) {
+  <div
+    class="dialog-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="dialog-title"
+    (keydown.escape)="cancelDelete()"
+  >
+    <section class="dialog">
+      <p class="dialog-eyebrow">Conferma eliminazione</p>
+      <h2 id="dialog-title">Cancellare questo pagamento?</h2>
+      <p class="dialog-desc">
+        L'operazione è irreversibile. Il documento sarà rimosso da Firestore e la dashboard aggiornerà il saldo immediatamente.
+      </p>
+
+      @if (getPendingPayment(); as payment) {
+        <div class="dialog-payment-summary" aria-label="Pagamento da cancellare">
+          <span class="avatar avatar--sm">{{ getPersonInitials(payment.personId) }}</span>
+          <div class="dialog-payment-summary__info">
+            <span class="dialog-payment-summary__name">{{ getPersonName(payment.personId) }}</span>
+            <span class="dialog-payment-summary__meta">
+              {{ formatDate(payment.date).day }} {{ formatDate(payment.date).month }}@if (payment.note) { · {{ payment.note }}}
+            </span>
+          </div>
+          <span class="dialog-payment-summary__amount">€{{ formatAmount(payment.amount) }}</span>
+        </div>
+      }
+
+      @if (deleteError()) {
+        <div class="delete-error" role="alert">{{ deleteError() }}</div>
+      }
+
+      <div class="dialog-actions">
+        <button
+          class="btn-secondary"
+          type="button"
+          (click)="cancelDelete()"
+          [disabled]="isDeleting()"
+        >
+          Annulla
+        </button>
+        <button
+          class="btn-danger"
+          type="button"
+          (click)="confirmDelete()"
+          [disabled]="isDeleting()"
+          aria-describedby="dialog-title"
+        >
+          @if (isDeleting()) {
+            <mat-spinner diameter="16" color="warn"></mat-spinner>
+            Cancellazione…
+          } @else {
+            Cancella pagamento
+          }
+        </button>
+      </div>
+    </section>
+  </div>
+}

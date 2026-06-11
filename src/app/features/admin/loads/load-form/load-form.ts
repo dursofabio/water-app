@@ -8,13 +8,15 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
 
 import { ConfigService } from '../../../../core/services/config.service';
 import { DEFAULT_PRICES } from '../../../../core/models/config.model';
-import { LoadsService } from '../../../../core/services/loads.service';
+import { LoadsService, LoadRecord } from '../../../../core/services/loads.service';
 import { BalanceService } from '../../../dashboard/services/balance.service';
 
 /** Una riga peso per una persona nel form. */
@@ -25,16 +27,6 @@ export interface PersonWeightEntry {
   weight: number;
 }
 
-/**
- * LoadFormComponent — US-008
- *
- * Form di registrazione di un carico cisterna.
- * - Legge le persone da /people tramite BalanceService (già disponibile)
- * - Legge i prezzi correnti da ConfigService (rxResource)
- * - I prezzi sono modificabili dall'utente (override)
- * - Il costo per persona si aggiorna reattivamente via computed()
- * - Al submit chiama LoadsService.addLoad() con snapshot dei prezzi
- */
 @Component({
   selector: 'app-load-form',
   standalone: true,
@@ -47,6 +39,19 @@ export class LoadFormComponent implements OnInit {
   private readonly loadsService = inject(LoadsService);
   private readonly balanceService = inject(BalanceService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+
+  // --- Route param ---
+  readonly loadId = signal<string | null>(null);
+  readonly isEditMode = computed(() => !!this.loadId());
+
+  // --- Edit: load existing record ---
+  readonly editLoadResource = rxResource({
+    params: () => this.loadId(),
+    stream: ({ params: id }) => (id ? this.loadsService.getLoadById(id) : of(null)),
+  });
+
+  private prefilled = false;
 
   // --- Form fields ---
   readonly today = new Date().toISOString().slice(0, 10);
@@ -61,7 +66,7 @@ export class LoadFormComponent implements OnInit {
     return balances.map((b) => ({ id: b.id, name: b.name, initials: b.initials }));
   });
 
-  // --- Pesi per persona (inizializzati quando people cambia) ---
+  // --- Pesi per persona ---
   readonly weights = signal<PersonWeightEntry[]>([]);
 
   // --- Prezzi auto-popolati da ConfigService, sovrascrivibili ---
@@ -120,23 +125,38 @@ export class LoadFormComponent implements OnInit {
   );
 
   constructor() {
+    // Create mode: init weights when people load and weights not yet set
     effect(() => {
       const people = this.people();
-      if (people.length > 0 && this.weights().length === 0) {
+      if (people.length > 0 && this.weights().length === 0 && !this.isEditMode()) {
         this.initWeights(people);
       }
+    });
+
+    // Edit mode: prefill form when both people and load record are ready
+    effect(() => {
+      if (!this.isEditMode()) return;
+      const loadRecord = this.editLoadResource.value();
+      const people = this.people();
+      if (loadRecord === null || loadRecord === undefined || people.length === 0 || this.prefilled) return;
+
+      this.prefillFromRecord(loadRecord, people);
+      this.prefilled = true;
     });
   }
 
   ngOnInit(): void {
-    // Inizializza i pesi con default 1 per ogni persona già disponibile
-    const currentPeople = this.people();
-    if (currentPeople.length > 0) {
-      this.initWeights(currentPeople);
+    const id = this.route.snapshot.paramMap.get('loadId');
+    if (id) {
+      this.loadId.set(id);
+    } else {
+      const currentPeople = this.people();
+      if (currentPeople.length > 0) {
+        this.initWeights(currentPeople);
+      }
     }
   }
 
-  /** Aggiorna i pesi quando le persone cambiano (e non sono ancora inizializzati). */
   private initWeights(people: { id: string; name: string; initials: string }[]): void {
     this.weights.set(
       people.map((p) => ({
@@ -148,19 +168,38 @@ export class LoadFormComponent implements OnInit {
     );
   }
 
-  /** Aggiorna il peso per la persona all'indice dato. */
+  private prefillFromRecord(
+    record: LoadRecord,
+    people: { id: string; name: string; initials: string }[],
+  ): void {
+    this.date.set(record.date.toISOString().slice(0, 10));
+    this.paidByPersonId.set(record.paidByPersonId);
+    this.waterPrice.set(record.waterPrice);
+    this.energyPrice.set(record.energyPrice);
+
+    this.weights.set(
+      people.map((p) => {
+        const existing = record.breakdown.find((b) => b.personId === p.id);
+        return {
+          personId: p.id,
+          name: p.name,
+          initials: p.initials,
+          weight: existing?.weight ?? 0,
+        };
+      }),
+    );
+  }
+
   updateWeight(index: number, value: number): void {
     const updated = [...this.weights()];
     updated[index] = { ...updated[index], weight: Math.max(0, value) };
     this.weights.set(updated);
   }
 
-  /** Aggiorna il prezzo acqua (override utente). */
   updateWaterPrice(value: number): void {
     this.waterPrice.set(value);
   }
 
-  /** Aggiorna il prezzo energia (override utente). */
   updateEnergyPrice(value: number): void {
     this.energyPrice.set(value);
   }
@@ -171,15 +210,21 @@ export class LoadFormComponent implements OnInit {
     this.isSaving.set(true);
     this.saveError.set(null);
 
-    try {
-      await this.loadsService.addLoad({
-        date: new Date(this.date()),
-        paidByPersonId: this.paidByPersonId(),
-        waterPrice: this.waterPrice(),
-        energyPrice: this.energyPrice(),
-        weights: this.weights().map((pw) => ({ personId: pw.personId, weight: pw.weight })),
-      });
+    const input = {
+      date: new Date(this.date()),
+      paidByPersonId: this.paidByPersonId(),
+      waterPrice: this.waterPrice(),
+      energyPrice: this.energyPrice(),
+      weights: this.weights().map((pw) => ({ personId: pw.personId, weight: pw.weight })),
+    };
 
+    try {
+      const id = this.loadId();
+      if (id) {
+        await this.loadsService.updateLoad(id, input);
+      } else {
+        await this.loadsService.addLoad(input);
+      }
       this.saveSuccess.set(true);
     } catch (err) {
       this.saveError.set(err instanceof Error ? err.message : 'Errore durante il salvataggio.');
@@ -189,11 +234,11 @@ export class LoadFormComponent implements OnInit {
   }
 
   navigateBack(): void {
-    void this.router.navigate(['/admin']);
+    void this.router.navigate(['/admin/carichi']);
   }
 
   navigateToAdmin(): void {
     this.saveSuccess.set(false);
-    void this.router.navigate(['/admin']);
+    void this.router.navigate(['/admin/carichi']);
   }
 }

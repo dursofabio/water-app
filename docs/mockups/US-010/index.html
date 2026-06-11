@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AcquaApp - US-010 Modifica e cancellazione carichi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon-text" type="button" aria-label="Torna all'area admin">‹ Admin</button>
+    <strong>Carichi</strong>
+    <span class="brand">AcquaApp</span>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Lista admin</p>
+        <h1>Correzioni veloci, saldi sempre coerenti</h1>
+        <p>Fabio vede gli ultimi carichi, apre la modifica con i dati precompilati e cancella solo dopo una conferma esplicita.</p>
+      </div>
+      <a class="primary" href="edit.html">Nuovo carico</a>
+    </section>
+
+    <section class="toolbar" aria-label="Filtri lista carichi">
+      <button class="chip active" type="button">Tutti</button>
+      <button class="chip" type="button">Questo mese</button>
+      <button class="chip" type="button">Pagati da Fabio</button>
+    </section>
+
+    <section class="loads-list" aria-label="Lista carichi amministratore">
+      <article class="load-row">
+        <div class="date-stack">
+          <span>11</span>
+          <small>giu</small>
+        </div>
+        <div class="load-main">
+          <div class="load-head">
+            <h2>Carico cisterna</h2>
+            <strong>€45,00</strong>
+          </div>
+          <p>Pagato da Fabio · acqua €35,00 · energia €10,00</p>
+          <div class="mini-breakdown">
+            <span>Fa 2 kg</span>
+            <span>Fe 1 kg</span>
+            <span>Ni 1 kg</span>
+            <span>Da 1 kg</span>
+          </div>
+        </div>
+        <div class="actions" aria-label="Azioni carico 11 giugno">
+          <a class="icon-btn" href="edit.html" aria-label="Modifica carico 11 giugno">✎</a>
+          <button class="icon-btn danger" type="button" data-delete aria-label="Cancella carico 11 giugno">×</button>
+        </div>
+      </article>
+
+      <article class="load-row">
+        <div class="date-stack">
+          <span>02</span>
+          <small>giu</small>
+        </div>
+        <div class="load-main">
+          <div class="load-head">
+            <h2>Carico cisterna</h2>
+            <strong>€75,00</strong>
+          </div>
+          <p>Pagato da Fernando · acqua €60,00 · energia €15,00</p>
+          <div class="mini-breakdown">
+            <span>Fe 2 kg</span>
+            <span>Ni 2 kg</span>
+            <span>Da 3 kg</span>
+            <span>Fa 3 kg</span>
+          </div>
+        </div>
+        <div class="actions" aria-label="Azioni carico 2 giugno">
+          <a class="icon-btn" href="edit.html" aria-label="Modifica carico 2 giugno">✎</a>
+          <button class="icon-btn danger" type="button" data-delete aria-label="Cancella carico 2 giugno">×</button>
+        </div>
+      </article>
+
+      <article class="load-row muted-row">
+        <div class="date-stack">
+          <span>21</span>
+          <small>mag</small>
+        </div>
+        <div class="load-main">
+          <div class="load-head">
+            <h2>Carico importato</h2>
+            <strong>€60,00</strong>
+          </div>
+          <p>Pagato da Nino · dati storici Excel</p>
+          <div class="mini-breakdown">
+            <span>Fe 1 kg</span>
+            <span>Ni 3 kg</span>
+            <span>Da 2 kg</span>
+            <span>Fa 2 kg</span>
+          </div>
+        </div>
+        <div class="actions" aria-label="Azioni carico 21 maggio">
+          <a class="icon-btn" href="edit.html" aria-label="Modifica carico 21 maggio">✎</a>
+          <button class="icon-btn danger" type="button" data-delete aria-label="Cancella carico 21 maggio">×</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div class="dialog-backdrop" id="delete-dialog" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+      <p class="eyebrow">Conferma richiesta</p>
+      <h2 id="dialog-title">Cancellare questo carico?</h2>
+      <p>Il carico sarà eliminato da Firestore e la dashboard ricalcolerà subito i saldi dalle collection aggiornate.</p>
+      <div class="dialog-actions">
+        <button class="secondary" type="button" id="cancel-delete">Annulla</button>
+        <button class="danger-action" type="button" id="confirm-delete">Cancella carico</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

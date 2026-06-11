@@ -1,9 +1,18 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, Timestamp, addDoc, collection } from '@angular/fire/firestore';
+import {
+  Firestore,
+  Timestamp,
+  addDoc,
+  collection,
+  doc,
+  setDoc,
+  deleteDoc,
+  onSnapshot,
+  query,
+  orderBy,
+} from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
 
-/**
- * Input per la registrazione di un nuovo pagamento.
- */
 export interface NewPaymentInput {
   personId: string;
   amount: number;
@@ -11,9 +20,6 @@ export interface NewPaymentInput {
   note?: string;
 }
 
-/**
- * Documento Firestore scritto in /payments.
- */
 export interface NewPaymentDocument {
   personId: string;
   amount: number;
@@ -21,25 +27,18 @@ export interface NewPaymentDocument {
   note?: string;
 }
 
-/**
- * PaymentsService — US-011
- *
- * Espone addPayment() che valida l'importo e scrive il documento
- * in /payments su Firestore con:
- * - personId: riferimento alla persona
- * - amount: importo del pagamento (> 0)
- * - date: data del pagamento come Firestore Timestamp
- * - note: nota opzionale
- */
+export interface PaymentRecord {
+  id: string;
+  personId: string;
+  amount: number;
+  date: Date;
+  note?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PaymentsService {
   private readonly firestore = inject(Firestore);
 
-  /**
-   * Valida l'importo e scrive il documento in /payments.
-   *
-   * @throws Error se amount è ≤ 0
-   */
   async addPayment(input: NewPaymentInput): Promise<void> {
     if (input.amount <= 0) {
       throw new Error("L'importo deve essere maggiore di zero.");
@@ -53,5 +52,78 @@ export class PaymentsService {
     };
 
     await addDoc(collection(this.firestore, 'payments'), document);
+  }
+
+  getPayments(): Observable<PaymentRecord[]> {
+    const paymentsQuery = query(
+      collection(this.firestore, 'payments'),
+      orderBy('date', 'desc'),
+    );
+
+    return new Observable<PaymentRecord[]>((observer) => {
+      const unsubscribe = onSnapshot(
+        paymentsQuery,
+        (snapshot) => {
+          const records = snapshot.docs.map((docSnap) => {
+            const data = docSnap.data() as NewPaymentDocument;
+            return {
+              id: docSnap.id,
+              personId: data.personId,
+              amount: data.amount,
+              date: data.date.toDate(),
+              ...(data.note ? { note: data.note } : {}),
+            } satisfies PaymentRecord;
+          });
+          observer.next(records);
+        },
+        (error) => observer.error(error),
+      );
+      return unsubscribe;
+    });
+  }
+
+  getPaymentById(id: string): Observable<PaymentRecord | null> {
+    const docRef = doc(this.firestore, 'payments', id);
+
+    return new Observable<PaymentRecord | null>((observer) => {
+      const unsubscribe = onSnapshot(
+        docRef,
+        (docSnap) => {
+          if (!docSnap.exists()) {
+            observer.next(null);
+            return;
+          }
+          const data = docSnap.data() as NewPaymentDocument;
+          observer.next({
+            id: docSnap.id,
+            personId: data.personId,
+            amount: data.amount,
+            date: data.date.toDate(),
+            ...(data.note ? { note: data.note } : {}),
+          });
+        },
+        (error) => observer.error(error),
+      );
+      return unsubscribe;
+    });
+  }
+
+  async updatePayment(id: string, input: NewPaymentInput): Promise<void> {
+    if (input.amount <= 0) {
+      throw new Error("L'importo deve essere maggiore di zero.");
+    }
+
+    const document: NewPaymentDocument = {
+      personId: input.personId,
+      amount: input.amount,
+      date: Timestamp.fromDate(input.date),
+      ...(input.note ? { note: input.note } : {}),
+    };
+
+    await setDoc(doc(this.firestore, 'payments', id), document);
+  }
+
+  async deletePayment(id: string): Promise<void> {
+    await deleteDoc(doc(this.firestore, 'payments', id));
   }
 }

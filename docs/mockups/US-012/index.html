@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AcquaApp — US-012 Lista pagamenti</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- Top bar -->
+    <header class="top-bar">
+      <div class="top-bar__inner">
+        <a href="#" class="back-btn" aria-label="Torna all'area admin">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Admin
+        </a>
+        <span class="top-bar__title">Pagamenti</span>
+        <div class="brand" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+            <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 3 16 3z" fill="url(#drop-g)"/>
+            <defs>
+              <linearGradient id="drop-g" x1="16" y1="3" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#7dd3fc"/>
+                <stop offset="100%" stop-color="#0e7490"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand__name">AcquaApp</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-content">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div class="page-header__left">
+          <p class="page-eyebrow">EP-004 · Gestione pagamenti</p>
+          <h1 class="page-title">Pagamenti</h1>
+          <p class="page-subtitle">Modifica o cancella i pagamenti registrati. Le modifiche si riflettono subito sui saldi in dashboard.</p>
+        </div>
+        <a href="edit.html" class="btn-primary" aria-label="Registra nuovo pagamento">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Nuovo pagamento
+        </a>
+      </div>
+
+      <!-- Summary strip -->
+      <div class="summary-strip" aria-label="Riepilogo pagamenti">
+        <div class="summary-stat">
+          <span class="summary-stat__label">Totale pagamenti</span>
+          <span class="summary-stat__value">€325,00</span>
+        </div>
+        <div class="summary-divider" aria-hidden="true"></div>
+        <div class="summary-stat">
+          <span class="summary-stat__label">Registrazioni</span>
+          <span class="summary-stat__value summary-stat__value--neutral">6</span>
+        </div>
+        <div class="summary-divider" aria-hidden="true"></div>
+        <div class="summary-stat">
+          <span class="summary-stat__label">Ultima modifica</span>
+          <span class="summary-stat__value summary-stat__value--neutral" style="font-size:1rem">11 giu 2026</span>
+        </div>
+      </div>
+
+      <!-- Toolbar / filters -->
+      <div class="list-toolbar" role="group" aria-label="Filtra pagamenti">
+        <button class="filter-chip filter-chip--active" type="button">Tutti</button>
+        <button class="filter-chip" type="button">Questo mese</button>
+        <button class="filter-chip" type="button">Fernando</button>
+        <button class="filter-chip" type="button">Nino</button>
+        <button class="filter-chip" type="button">Daniele</button>
+        <button class="filter-chip" type="button">Fabio</button>
+      </div>
+
+      <!-- Payments list -->
+      <section class="payments-list" aria-label="Lista pagamenti">
+
+        <article class="payment-row" data-payment-id="p1">
+          <div class="date-block" aria-hidden="true">
+            <span class="date-block__day">11</span>
+            <span class="date-block__month">giu</span>
+          </div>
+          <span class="avatar" title="Fernando">Fe</span>
+          <div class="payment-row__info">
+            <span class="payment-row__name">Fernando</span>
+            <span class="payment-row__note">Acconto giugno</span>
+          </div>
+          <span class="payment-row__amount">€100,00</span>
+          <div class="payment-row__actions">
+            <a href="edit.html" class="icon-btn" aria-label="Modifica pagamento Fernando 11 giugno">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </a>
+            <button
+              class="icon-btn icon-btn--danger"
+              type="button"
+              data-delete
+              data-name="Fernando"
+              data-date="11 giu 2026"
+              data-amount="€100,00"
+              data-note="Acconto giugno"
+              aria-label="Cancella pagamento Fernando 11 giugno"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6"/>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          </div>
+        </article>
+
+        <article class="payment-row" data-payment-id="p2">
+          <div class="date-block" aria-hidden="true">
+            <span class="date-block__day">05</span>
+            <span class="date-block__month">giu</span>
+          </div>
+          <span class="avatar" title="Nino">Ni</span>
+          <div class="payment-row__info">
+            <span class="payment-row__name">Nino</span>
+            <span class="payment-row__note">—</span>
+          </div>
+          <span class="payment-row__amount">€30,00</span>
+          <div class="payment-row__actions">
+            <a href="edit.html" class="icon-btn" aria-label="Modifica pagamento Nino 5 giugno">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </a>
+            <button
+              class="icon-btn icon-btn--danger"
+              type="button"
+              data-delete
+              data-name="Nino"
+              data-date="5 giu 2026"
+              data-amount="€30,00"
+              data-note=""
+              aria-label="Cancella pagamento Nino 5 giugno"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6"/>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          </div>
+        </article>
+
+        <article class="payment-row" data-payment-id="p3">
+          <div class="date-block" aria-hidden="true">
+            <span class="date-block__day">22</span>
+            <span class="date-block__month">mag</span>
+          </div>
+          <span class="avatar" title="Fabio">Fa</span>
+          <div class="payment-row__info">
+            <span class="payment-row__name">Fabio</span>
+            <span class="payment-row__note">Quota annuale</span>
+          </div>
+          <span class="payment-row__amount">€120,00</span>
+          <div class="payment-row__actions">
+            <a href="edit.html" class="icon-btn" aria-label="Modifica pagamento Fabio 22 maggio">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </a>
+            <button
+              class="icon-btn icon-btn--danger"
+              type="button"
+              data-delete
+              data-name="Fabio"
+              data-date="22 mag 2026"
+              data-amount="€120,00"
+              data-note="Quota annuale"
+              aria-label="Cancella pagamento Fabio 22 maggio"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6"/>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          </div>
+        </article>
+
+        <article class="payment-row" data-payment-id="p4">
+          <div class="date-block" aria-hidden="true">
+            <span class="date-block__day">10</span>
+            <span class="date-block__month">apr</span>
+          </div>
+          <span class="avatar" title="Daniele">Da</span>
+          <div class="payment-row__info">
+            <span class="payment-row__name">Daniele</span>
+            <span class="payment-row__note">—</span>
+          </div>
+          <span class="payment-row__amount">€25,00</span>
+          <div class="payment-row__actions">
+            <a href="edit.html" class="icon-btn" aria-label="Modifica pagamento Daniele 10 aprile">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </a>
+            <button
+              class="icon-btn icon-btn--danger"
+              type="button"
+              data-delete
+              data-name="Daniele"
+              data-date="10 apr 2026"
+              data-amount="€25,00"
+              data-note=""
+              aria-label="Cancella pagamento Daniele 10 aprile"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6"/>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          </div>
+        </article>
+
+        <article class="payment-row" data-payment-id="p5">
+          <div class="date-block" aria-hidden="true">
+            <span class="date-block__day">15</span>
+            <span class="date-block__month">feb</span>
+          </div>
+          <span class="avatar" title="Fernando">Fe</span>
+          <div class="payment-row__info">
+            <span class="payment-row__name">Fernando</span>
+            <span class="payment-row__note">Saldo anno precedente</span>
+          </div>
+          <span class="payment-row__amount">€50,00</span>
+          <div class="payment-row__actions">
+            <a href="edit.html" class="icon-btn" aria-label="Modifica pagamento Fernando 15 febbraio">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </a>
+            <button
+              class="icon-btn icon-btn--danger"
+              type="button"
+              data-delete
+              data-name="Fernando"
+              data-date="15 feb 2026"
+              data-amount="€50,00"
+              data-note="Saldo anno precedente"
+              aria-label="Cancella pagamento Fernando 15 febbraio"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6"/>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          </div>
+        </article>
+
+      </section>
+
+      <!-- Sketch: empty state (hidden by default, shown when list is empty) -->
+      <div id="empty-state" class="empty-state" hidden aria-live="polite">
+        <div class="empty-state__icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="2" y="5" width="20" height="14" rx="2"/>
+            <line x1="2" y1="10" x2="22" y2="10"/>
+          </svg>
+        </div>
+        <h2 class="empty-state__title">Nessun pagamento registrato</h2>
+        <p class="empty-state__body">Registra il primo pagamento usando il pulsante in alto. Sarà subito visibile in dashboard.</p>
+        <a href="edit.html" class="btn-primary">Registra il primo pagamento</a>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Delete confirmation dialog -->
+  <div class="dialog-backdrop" id="delete-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+    <div class="dialog">
+      <div class="dialog__icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+        </svg>
+      </div>
+      <p class="dialog__eyebrow">Conferma eliminazione</p>
+      <h2 class="dialog__title" id="dialog-title">Cancellare questo pagamento?</h2>
+      <p class="dialog__body">L'operazione è irreversibile. Il documento sarà rimosso da Firestore e la dashboard aggiornerà il saldo immediatamente.</p>
+
+      <!-- Payment summary -->
+      <div class="dialog-payment-summary" id="dialog-summary" aria-label="Pagamento da cancellare">
+        <span class="avatar avatar--sm" id="dialog-avatar">Fe</span>
+        <div class="dialog-payment-summary__info">
+          <span class="dialog-payment-summary__name" id="dialog-name">Fernando</span>
+          <span class="dialog-payment-summary__meta" id="dialog-meta">11 giu 2026 · Acconto giugno</span>
+        </div>
+        <span class="dialog-payment-summary__amount" id="dialog-amount">€100,00</span>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="btn-secondary" type="button" id="cancel-delete">Annulla</button>
+        <button class="btn-danger" type="button" id="confirm-delete">
+          <span id="delete-btn-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true" style="margin-right:4px;vertical-align:-2px">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              <path d="M10 11v6M14 11v6"/>
+              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+            </svg>
+            Cancella pagamento
+          </span>
+          <span id="delete-btn-spinner" hidden style="display:inline-flex;align-items:center;gap:8px">
+            <span class="spinner spinner--sm"></span> Eliminazione…
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success toast -->
+  <div class="toast" id="success-toast" role="status" aria-live="polite">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+    Pagamento cancellato — saldo aggiornato
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

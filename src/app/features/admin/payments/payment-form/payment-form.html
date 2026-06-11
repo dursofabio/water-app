@@ -3,13 +3,13 @@
   <!-- Top bar -->
   <header class="top-bar">
     <div class="top-bar__inner">
-      <button type="button" class="back-btn" (click)="navigateBack()" aria-label="Torna all'area admin">
+      <button type="button" class="back-btn" (click)="navigateBack()" aria-label="Torna alla lista pagamenti">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
-        Admin
+        Pagamenti
       </button>
-      <span class="top-bar__title">Nuovo pagamento</span>
+      <span class="top-bar__title">{{ isEditMode() ? 'Modifica pagamento' : 'Nuovo pagamento' }}</span>
       <div class="brand" aria-hidden="true">
         <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
           <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 3 16 3z" fill="url(#drop-pay)"/>
@@ -27,9 +27,29 @@
 
   <main class="page-content">
     <div class="page-header">
-      <h1 class="page-title">Registra pagamento</h1>
-      <p class="page-subtitle">Inserisci un pagamento ricevuto. Il saldo si aggiorna automaticamente su Firestore.</p>
+      <h1 class="page-title">{{ isEditMode() ? 'Modifica pagamento' : 'Registra pagamento' }}</h1>
+      <p class="page-subtitle">
+        @if (isEditMode()) {
+          Il form è precompilato con i dati esistenti. Modifica solo i campi che vuoi aggiornare.
+        } @else {
+          Inserisci un pagamento ricevuto. Il saldo si aggiorna automaticamente su Firestore.
+        }
+      </p>
     </div>
+
+    <!-- Edit mode: loading/not-found state -->
+    @if (isEditMode() && editPaymentResource.isLoading()) {
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;color:#64748b;font-size:.875rem" aria-label="Caricamento pagamento in corso">
+        <mat-spinner diameter="28" color="accent"></mat-spinner>
+        <span>Caricamento dati pagamento…</span>
+      </div>
+    }
+
+    @if (isEditMode() && !editPaymentResource.isLoading() && editPaymentResource.value() === null) {
+      <div class="save-error" role="alert">
+        Pagamento non trovato. Potrebbe essere stato eliminato.
+      </div>
+    }
 
     <form (ngSubmit)="submit()" novalidate>
 
@@ -209,7 +229,7 @@
               <polyline points="17 21 17 13 7 13 7 21"/>
               <polyline points="7 3 7 8 15 8"/>
             </svg>
-            Salva pagamento
+            {{ isEditMode() ? 'Salva modifiche' : 'Salva pagamento' }}
           }
         </button>
         <button type="button" class="btn-secondary" (click)="navigateBack()">
@@ -235,9 +255,15 @@
           <polyline points="20 6 9 17 4 12"/>
         </svg>
       </div>
-      <h2>Pagamento salvato!</h2>
-      <p>Il documento è stato scritto su Firestore. Il saldo di <strong>{{ selectedPerson()?.name }}</strong> si è aggiornato automaticamente.</p>
-      <button type="button" class="btn-primary" (click)="navigateToAdmin()">Torna all'area admin</button>
+      <h2>{{ isEditMode() ? 'Pagamento aggiornato!' : 'Pagamento salvato!' }}</h2>
+      <p>
+        @if (isEditMode()) {
+          Il documento è stato aggiornato su Firestore.
+        } @else {
+          Il documento è stato scritto su Firestore. Il saldo di <strong>{{ selectedPerson()?.name }}</strong> si è aggiornato automaticamente.
+        }
+      </p>
+      <button type="button" class="btn-primary" (click)="navigateToAdmin()">Torna alla lista</button>
     </div>
   </div>
 }

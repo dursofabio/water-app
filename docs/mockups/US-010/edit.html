@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AcquaApp - US-010 Modifica carico</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="icon-text" href="index.html" aria-label="Torna alla lista carichi">‹ Carichi</a>
+    <strong>Modifica carico</strong>
+    <span class="brand">AcquaApp</span>
+  </header>
+
+  <main class="shell narrow">
+    <section class="hero compact">
+      <div>
+        <p class="eyebrow">Dati precompilati</p>
+        <h1>Correggi il peso e ricalcola le quote</h1>
+        <p>Il form usa lo stesso modello del nuovo carico, ma salva con update sul documento esistente.</p>
+      </div>
+    </section>
+
+    <form class="form-grid">
+      <section class="panel">
+        <h2>Dettagli</h2>
+        <label>
+          <span>Data carico</span>
+          <input type="date" value="2026-06-11" />
+        </label>
+        <label>
+          <span>Chi ha pagato</span>
+          <select>
+            <option>Fabio</option>
+            <option>Fernando</option>
+            <option>Nino</option>
+            <option>Daniele</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="panel">
+        <h2>Pesi per persona</h2>
+        <div class="weight-grid">
+          <label><span>Fabio</span><input data-weight type="number" min="0" step="0.5" value="2" /></label>
+          <label><span>Fernando</span><input data-weight type="number" min="0" step="0.5" value="1" /></label>
+          <label><span>Nino</span><input data-weight type="number" min="0" step="0.5" value="1" /></label>
+          <label><span>Daniele</span><input data-weight type="number" min="0" step="0.5" value="1" /></label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Prezzi snapshot</h2>
+        <div class="price-grid">
+          <label><span>Acqua</span><input id="water" type="number" min="0" step="0.01" value="35" /></label>
+          <label><span>Energia</span><input id="energy" type="number" min="0" step="0.01" value="10" /></label>
+        </div>
+      </section>
+
+      <section class="preview" aria-live="polite">
+        <div class="preview-head">
+          <div>
+            <p class="eyebrow">Anteprima aggiornata</p>
+            <h2 id="preview-total">€45,00</h2>
+          </div>
+          <span class="pill ok" id="balance-pill">Ricalcolato</span>
+        </div>
+        <div class="rows" id="rows"></div>
+      </section>
+
+      <footer class="sticky-actions">
+        <a class="secondary" href="index.html">Annulla</a>
+        <button class="primary" type="button">Salva modifiche</button>
+      </footer>
+    </form>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
