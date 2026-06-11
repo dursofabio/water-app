@@ -9,6 +9,8 @@ export interface Person {
 export interface Payment {
   personId: string;
   amount: number;
+  date?: import('@angular/fire/firestore').Timestamp;
+  note?: string;
 }
 
 /** Semantic balance status */

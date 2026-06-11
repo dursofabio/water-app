@@ -1,0 +1,211 @@
+<div class="app-shell">
+
+  <!-- Top bar -->
+  <header class="top-bar">
+    <div class="top-bar__inner">
+      <button type="button" class="back-btn" (click)="navigateBack()" aria-label="Torna all'area admin">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Admin
+      </button>
+      <span class="top-bar__title">Prezzi</span>
+      <div class="brand" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+          <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 3 16 3z" fill="url(#drop-cf)"/>
+          <defs>
+            <linearGradient id="drop-cf" x1="16" y1="3" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7dd3fc"/>
+              <stop offset="100%" stop-color="#0e7490"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="brand__name">AcquaApp</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <div class="page-header">
+      <h1 class="page-title">Configura prezzi</h1>
+      <p class="page-subtitle">Modifica il costo dell'acqua e dell'energia. I nuovi prezzi si applicano ai carichi futuri; quelli già registrati mantengono lo snapshot originale.</p>
+    </div>
+
+    <form (ngSubmit)="submit()" novalidate>
+
+      <!-- Sezione prezzi -->
+      <section class="form-card" aria-labelledby="section-prices-label">
+        <p class="form-card__label" id="section-prices-label">
+          <svg class="form-card__label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          Prezzi correnti
+          <span class="prices-source-badge">
+            @if (configLoading()) {
+              Caricamento...
+            } @else {
+              Auto-popolati da /config
+            }
+          </span>
+        </p>
+
+        <div class="prices-grid">
+
+          <!-- Acqua -->
+          <div class="price-card price-card--water">
+            <div class="price-card__header">
+              <div class="price-card__icon price-card__icon--water">
+                <svg width="18" height="18" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                  <path d="M16 4C16 4 8 13 8 20a8 8 0 0 0 16 0C24 13 16 4 16 4z" fill="currentColor" opacity="0.85"/>
+                </svg>
+              </div>
+              <div>
+                <div class="price-card__title">Acqua</div>
+                <div class="price-card__subtitle">Costo cisterna</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="price-water">
+                Nuovo prezzo <span class="req" aria-hidden="true">*</span>
+              </label>
+              <div class="field__input--prefix-wrap">
+                <span class="field__prefix">€</span>
+                <input
+                  id="price-water"
+                  class="field__input field__input--prefix"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  [value]="waterPrice()"
+                  (input)="updateWaterPrice(+$any($event.target).value)"
+                  placeholder="0.00"
+                  aria-label="Nuovo prezzo acqua in euro"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Energia -->
+          <div class="price-card price-card--energy">
+            <div class="price-card__header">
+              <div class="price-card__icon price-card__icon--energy">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+              </div>
+              <div>
+                <div class="price-card__title">Energia</div>
+                <div class="price-card__subtitle">Costo pompa</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="price-energy">
+                Nuovo prezzo <span class="req" aria-hidden="true">*</span>
+              </label>
+              <div class="field__input--prefix-wrap">
+                <span class="field__prefix">€</span>
+                <input
+                  id="price-energy"
+                  class="field__input field__input--prefix"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  [value]="energyPrice()"
+                  (input)="updateEnergyPrice(+$any($event.target).value)"
+                  placeholder="0.00"
+                  aria-label="Nuovo prezzo energia in euro"
+                />
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Validazione -->
+        @if (!isFormValid()) {
+          <div class="validation-msg validation-msg--error" role="alert" aria-live="polite">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            I prezzi devono essere numeri non negativi (≥ 0).
+          </div>
+        }
+
+      </section>
+
+      <!-- Nota informativa -->
+      <div class="info-note" role="note">
+        <svg class="info-note__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <p class="info-note__text">
+          <strong>I carichi già registrati non cambiano.</strong>
+          Ogni carico salva uno snapshot dei prezzi al momento dell'inserimento —
+          modificare i prezzi qui non altera i saldi storici.
+          I nuovi prezzi saranno proposti automaticamente nel form di inserimento carico.
+        </p>
+      </div>
+
+      <!-- Errore salvataggio -->
+      @if (saveError()) {
+        <div class="save-error" role="alert">
+          {{ saveError() }}
+        </div>
+      }
+
+      <!-- Azioni -->
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="!isFormValid() || isSaving()"
+          aria-describedby="section-prices-label"
+        >
+          @if (isSaving()) {
+            <mat-spinner diameter="16" color="accent"></mat-spinner>
+            Salvataggio...
+          } @else {
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            Salva prezzi
+          }
+        </button>
+        <button type="button" class="btn-secondary" (click)="navigateBack()">
+          Annulla
+        </button>
+      </div>
+
+    </form>
+  </main>
+</div>
+
+<!-- Overlay stato salvato -->
+@if (saveSuccess()) {
+  <div
+    class="success-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Prezzi salvati"
+  >
+    <div class="success-card">
+      <div class="success-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h2>Prezzi aggiornati!</h2>
+      <p>I nuovi prezzi sono stati salvati su Firestore. I carichi futuri useranno questi valori.</p>
+      <button type="button" class="btn-primary" (click)="navigateToAdmin()">Torna ad Admin</button>
+    </div>
+  </div>
+}

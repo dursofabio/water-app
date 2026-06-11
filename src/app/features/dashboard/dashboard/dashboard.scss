@@ -135,6 +135,41 @@
   padding: var(--space-8) var(--space-6) var(--space-16);
 }
 
+/* --- Access denied banner (US-006) --- */
+.access-denied-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  padding: var(--space-4) var(--space-5);
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  border-radius: var(--radius-lg);
+  color: #f87171;
+  animation: slide-in 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.access-denied-banner__icon {
+  font-size: 1rem;
+  line-height: 1.5;
+  flex-shrink: 0;
+}
+
+.access-denied-banner__body {
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: #fca5a5;
+
+  strong {
+    color: #f87171;
+  }
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* --- Sections --- */
 .section {
   margin-bottom: var(--space-12);

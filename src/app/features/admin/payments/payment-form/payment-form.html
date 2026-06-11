@@ -1,0 +1,243 @@
+<div class="app-shell">
+
+  <!-- Top bar -->
+  <header class="top-bar">
+    <div class="top-bar__inner">
+      <button type="button" class="back-btn" (click)="navigateBack()" aria-label="Torna all'area admin">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Admin
+      </button>
+      <span class="top-bar__title">Nuovo pagamento</span>
+      <div class="brand" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+          <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 3 16 3z" fill="url(#drop-pay)"/>
+          <defs>
+            <linearGradient id="drop-pay" x1="16" y1="3" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7dd3fc"/>
+              <stop offset="100%" stop-color="#0e7490"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="brand__name">AcquaApp</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <div class="page-header">
+      <h1 class="page-title">Registra pagamento</h1>
+      <p class="page-subtitle">Inserisci un pagamento ricevuto. Il saldo si aggiorna automaticamente su Firestore.</p>
+    </div>
+
+    <form (ngSubmit)="submit()" novalidate>
+
+      <!-- Sezione 1 — Persona -->
+      <section class="form-card" aria-labelledby="section-person-label">
+        <p class="form-card__label" id="section-person-label">
+          <svg class="form-card__label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          Persona
+          <span class="req" aria-hidden="true">*</span>
+        </p>
+
+        <div class="person-grid" role="group" aria-label="Seleziona persona">
+          @for (person of people(); track person.id) {
+            <button
+              type="button"
+              class="person-card"
+              [class.selected]="paidByPersonId() === person.id"
+              [attr.aria-pressed]="paidByPersonId() === person.id"
+              (click)="selectPerson(person.id)"
+            >
+              <span class="avatar" aria-hidden="true">{{ person.initials }}</span>
+              <span class="person-card__name">{{ person.name }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
+      <!-- Sezione 2 — Dettagli pagamento -->
+      <section class="form-card" aria-labelledby="section-details-label">
+        <p class="form-card__label" id="section-details-label">
+          <svg class="form-card__label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Dettagli
+        </p>
+
+        <div class="date-amount-row">
+          <div class="field">
+            <label class="field__label" for="payment-date">
+              Data <span class="req" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="payment-date"
+              class="field__input"
+              type="date"
+              [value]="date()"
+              (change)="date.set($any($event.target).value)"
+              required
+              aria-required="true"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="payment-amount">
+              Importo <span class="req" aria-hidden="true">*</span>
+            </label>
+            <div class="field__input--prefix-wrap">
+              <span class="field__prefix">€</span>
+              <input
+                id="payment-amount"
+                class="field__input"
+                type="number"
+                min="0.01"
+                step="0.01"
+                placeholder="0,00"
+                [value]="amount() || ''"
+                (input)="updateAmount(+$any($event.target).value)"
+                required
+                aria-required="true"
+                aria-label="Importo pagamento in euro"
+              />
+            </div>
+            <span class="field__hint">Deve essere maggiore di zero</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="payment-note">
+            Nota
+            <span class="optional-badge">opzionale</span>
+          </label>
+          <textarea
+            id="payment-note"
+            class="field__input field__textarea"
+            placeholder="Es. bonifico del 10 giugno, pagamento parziale…"
+            maxlength="200"
+            [value]="note()"
+            (input)="note.set($any($event.target).value)"
+            aria-label="Nota opzionale sul pagamento"
+          ></textarea>
+          <div class="note-footer">
+            <span class="char-count">{{ note().length }}/200</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preview pagamento -->
+      @if (paidByPersonId() && amount() > 0) {
+        <div class="preview-card" aria-live="polite" aria-label="Riepilogo pagamento">
+          <div class="preview-card__header">
+            <span class="preview-label">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display:inline; margin-right: 4px;">
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+              Riepilogo pagamento
+            </span>
+            <span class="preview-person-name">{{ selectedPerson()?.name }}</span>
+          </div>
+
+          <div class="preview-amount-row">
+            <span class="preview-amount">€{{ amount().toFixed(2) }}</span>
+            <span class="preview-amount-label">registrati come ricevuti</span>
+          </div>
+
+          @if (note()) {
+            <div class="preview-note-preview">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              <span>{{ note() }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Validazione importo -->
+      <div
+        class="validation-msg"
+        [class.validation-msg--ok]="amount() > 0"
+        [class.validation-msg--error]="amount() <= 0"
+        style="margin-bottom: 1rem;"
+        role="status"
+        aria-live="polite"
+      >
+        @if (amount() > 0) {
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Importo valido: <strong style="margin-left: 4px; font-family: var(--font-mono, monospace);">€{{ amount().toFixed(2) }}</strong>
+        } @else {
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          L'importo deve essere maggiore di zero
+        }
+      </div>
+
+      <!-- Errore salvataggio -->
+      @if (saveError()) {
+        <div class="save-error" role="alert">
+          {{ saveError() }}
+        </div>
+      }
+
+      <!-- Azioni -->
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="!isFormValid() || isSaving()"
+        >
+          @if (isSaving()) {
+            <mat-spinner diameter="16" color="accent"></mat-spinner>
+            Salvataggio...
+          } @else {
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            Salva pagamento
+          }
+        </button>
+        <button type="button" class="btn-secondary" (click)="navigateBack()">
+          Annulla
+        </button>
+      </div>
+
+    </form>
+  </main>
+</div>
+
+<!-- Overlay stato salvato -->
+@if (saveSuccess()) {
+  <div
+    class="success-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Pagamento salvato"
+  >
+    <div class="success-card">
+      <div class="success-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h2>Pagamento salvato!</h2>
+      <p>Il documento è stato scritto su Firestore. Il saldo di <strong>{{ selectedPerson()?.name }}</strong> si è aggiornato automaticamente.</p>
+      <button type="button" class="btn-primary" (click)="navigateToAdmin()">Torna all'area admin</button>
+    </div>
+  </div>
+}

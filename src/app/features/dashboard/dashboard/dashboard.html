@@ -27,6 +27,18 @@
   <!-- Main content -->
   <main class="page-content">
 
+    <!-- Access denied banner — shown after unauthorized login attempt (US-006) -->
+    @if (showDeniedBanner()) {
+      <div class="access-denied-banner" role="alert" aria-live="assertive">
+        <span class="access-denied-banner__icon" aria-hidden="true">&#9888;</span>
+        <div class="access-denied-banner__body">
+          <strong>Accesso negato.</strong>
+          Il tuo account non è autorizzato come amministratore.
+        </div>
+      </div>
+    }
+
+
     <!-- Section: saldi -->
     <section class="section" aria-label="Saldi per persona">
       <div class="section-header">

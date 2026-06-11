@@ -9,7 +9,7 @@
     "test": "ng test",
     "test:e2e": "playwright test",
     "test:rules": "node src/test/firestore-rules.test.mjs",
-    "emulators": "firebase emulators:start --only firestore --project acquaapp-dev",
+    "emulators": "firebase emulators:start --only firestore,auth --project acquaapp-dev",
     "emulators:all": "firebase emulators:start --project acquaapp-dev",
     "seed": "node scripts/seed.mjs",
     "deploy": "ng build && firebase deploy"

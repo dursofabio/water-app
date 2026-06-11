@@ -1,0 +1,183 @@
+/* ============================================================
+   AcquaApp — US-013 Configurazione prezzi
+   Stili specifici per il form di configurazione prezzi
+   ============================================================ */
+
+/* ---- Pricing cards ---- */
+.prices-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+@media (max-width: 480px) {
+  .prices-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.price-card {
+  background: var(--surface-base);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transition: border-color 0.2s;
+}
+
+.price-card--water {
+  border-color: var(--color-water-border);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.06), transparent 70%);
+}
+
+.price-card--energy {
+  border-color: var(--color-energy-border);
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.06), transparent 70%);
+}
+
+.price-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.price-card__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.price-card__icon--water {
+  background: var(--color-water-bg);
+  border: 1px solid var(--color-water-border);
+  color: var(--color-water);
+}
+
+.price-card__icon--energy {
+  background: var(--color-energy-bg);
+  border: 1px solid var(--color-energy-border);
+  color: var(--color-energy);
+}
+
+.price-card__title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.price-card__subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* Current price display */
+.price-card__current {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-overlay);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.price-card__current-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.price-card__current-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.price-card__current-value--water {
+  color: var(--color-water);
+}
+
+.price-card__current-value--energy {
+  color: var(--color-energy);
+}
+
+/* Field override */
+.price-card .field__label {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.price-card .field__input {
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* ---- Validation message ---- */
+.validation-msg {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+}
+
+.validation-msg--error {
+  color: var(--color-error);
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+}
+
+/* ---- Info note ---- */
+.info-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: rgba(34, 211, 238, 0.04);
+  border: 1px solid rgba(34, 211, 238, 0.12);
+  border-radius: var(--radius-md);
+}
+
+.info-note__icon {
+  flex-shrink: 0;
+  color: var(--color-ocean-400);
+  margin-top: 1px;
+}
+
+.info-note__text {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.info-note__text strong {
+  color: var(--text-primary);
+}
+
+/* ---- Error alert ---- */
+.save-error {
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: var(--radius-md);
+  color: var(--color-error);
+  font-size: 0.875rem;
+}
+
+/* ---- Req badge ---- */
+.req {
+  color: var(--color-error);
+}

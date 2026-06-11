@@ -92,6 +92,17 @@ export async function insertRealtimeLoad(testEnv: SeedEnvironment): Promise<void
   });
 }
 
+/** Seed /config/prices with the standard prices used in US-008 tests. */
+export async function seedConfigPrices(
+  testEnv: SeedEnvironment,
+  prices: { waterPrice: number; energyPrice: number } = { waterPrice: 35, energyPrice: 10 },
+): Promise<void> {
+  await testEnv.withSecurityRulesDisabled(async (ctx) => {
+    const db = ctx.firestore();
+    await setDoc(doc(db, 'config', 'prices'), prices);
+  });
+}
+
 async function clearCollection(db: ReturnType<SeedEnvironment['unauthenticatedContext']>['firestore'], name: string): Promise<void> {
   const snap = await getDocs(collection(db, name));
   await Promise.all(snap.docs.map((document) => deleteDoc(document.ref)));

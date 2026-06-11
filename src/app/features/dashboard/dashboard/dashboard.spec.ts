@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
+import { provideRouter } from '@angular/router';
 import { Dashboard } from './dashboard';
 import { BalanceService } from '../services/balance.service';
 import { DashboardLoadsService } from '../services/dashboard-loads.service';
@@ -64,6 +65,7 @@ describe('Dashboard (US-003)', () => {
     await TestBed.configureTestingModule({
       imports: [Dashboard],
       providers: [
+        provideRouter([]),
         { provide: BalanceService, useClass: MockBalanceService },
         { provide: DashboardLoadsService, useClass: MockDashboardLoadsService },
       ],

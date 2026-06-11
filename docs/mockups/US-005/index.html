@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AcquaApp - Ultimi pagamenti</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <link rel="stylesheet" href="dashboard-payments.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-bar">
+      <div class="top-bar__inner">
+        <div class="brand">
+          <svg class="brand__icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M16 3C16 3 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 3 16 3z" fill="url(#drop)" />
+            <defs>
+              <linearGradient id="drop" x1="16" y1="3" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#7dd3fc" />
+                <stop offset="100%" stop-color="#0e7490" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand__name">AcquaApp</span>
+        </div>
+        <span class="live-badge">
+          <span class="live-dot" aria-hidden="true"></span>
+          Aggiornato in tempo reale
+        </span>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <section class="section" aria-label="Saldi per persona">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Saldi</h1>
+            <span class="section-subtitle">Situazione aggiornata al <time id="last-update">11 giu 2026, 09:24</time></span>
+          </div>
+        </div>
+
+        <div class="balance-grid">
+          <article class="balance-card" data-state="credit">
+            <span class="avatar">Fe</span>
+            <span class="status">Credito</span>
+            <strong>Fernando</strong>
+            <p>&euro;-25,00</p>
+          </article>
+          <article class="balance-card" data-state="debt">
+            <span class="avatar">Ni</span>
+            <span class="status">Debito</span>
+            <strong>Nino</strong>
+            <p>&euro;+30,00</p>
+          </article>
+          <article class="balance-card" data-state="debt">
+            <span class="avatar">Da</span>
+            <span class="status">Debito</span>
+            <strong>Daniele</strong>
+            <p>&euro;+25,00</p>
+          </article>
+          <article class="balance-card" data-state="zero">
+            <span class="avatar">Fa</span>
+            <span class="status">In pari</span>
+            <strong>Fabio</strong>
+            <p>&euro;0,00</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="dashboard-ledger" aria-label="Movimenti recenti">
+        <div class="ledger-column">
+          <div class="section-header section-header--loads">
+            <div>
+              <h2 class="section-title section-title--sm">Ultimi carichi</h2>
+              <span class="section-subtitle">Quote e prezzi snapshot.</span>
+            </div>
+            <span class="count-badge">10 carichi</span>
+          </div>
+
+          <div class="loads-list">
+            <article class="load-row is-open">
+              <button class="load-summary" type="button" aria-expanded="true">
+                <span class="summary-date">09 giu</span>
+                <span class="summary-main">
+                  <strong>Carico cisterna</strong>
+                  <small>Pagato da Fabio</small>
+                </span>
+                <span class="summary-amount">&euro;120,00</span>
+                <span class="chevron" aria-hidden="true">⌄</span>
+              </button>
+              <div class="load-detail">
+                <div class="snapshot-strip">
+                  <span>Acqua &euro;100,00</span>
+                  <span>Energia &euro;20,00</span>
+                  <span>Totale pesi 12</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="load-row">
+              <button class="load-summary" type="button" aria-expanded="false">
+                <span class="summary-date">02 giu</span>
+                <span class="summary-main">
+                  <strong>Carico cisterna</strong>
+                  <small>Pagato da Fernando</small>
+                </span>
+                <span class="summary-amount">&euro;75,00</span>
+                <span class="chevron" aria-hidden="true">⌄</span>
+              </button>
+              <div class="load-detail" hidden>
+                <div class="snapshot-strip">
+                  <span>Acqua &euro;60,00</span>
+                  <span>Energia &euro;15,00</span>
+                  <span>Totale pesi 10</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="ledger-column ledger-column--payments">
+          <div class="section-header section-header--payments">
+            <div>
+              <h2 class="section-title section-title--sm">Ultimi pagamenti</h2>
+              <span class="section-subtitle">Gli ultimi 10 incassi registrati.</span>
+            </div>
+            <div class="payment-actions" aria-label="Azioni prototipo pagamenti">
+              <button class="icon-button" type="button" id="toggle-empty" aria-pressed="false" title="Mostra stato vuoto">
+                <span aria-hidden="true">∅</span>
+              </button>
+              <button class="action-button" type="button" id="add-payment">
+                <span aria-hidden="true">+</span>
+                Pagamento
+              </button>
+            </div>
+          </div>
+
+          <div class="payments-panel" id="payments-panel">
+            <div class="payments-head" aria-hidden="true">
+              <span>Data</span>
+              <span>Persona</span>
+              <span>Importo</span>
+            </div>
+
+            <div class="payments-list" id="payments-list">
+              <article class="payment-row" data-person="Fernando">
+                <time datetime="2026-06-10">10 giu</time>
+                <span class="payer"><span class="payer-avatar">Fe</span>Fernando<small>Bonifico istantaneo</small></span>
+                <strong>&euro;100,00</strong>
+              </article>
+              <article class="payment-row" data-person="Fabio">
+                <time datetime="2026-06-09">09 giu</time>
+                <span class="payer"><span class="payer-avatar">Fa</span>Fabio<small>Quota carico</small></span>
+                <strong>&euro;120,00</strong>
+              </article>
+              <article class="payment-row" data-person="Nino">
+                <time datetime="2026-06-06">06 giu</time>
+                <span class="payer"><span class="payer-avatar">Ni</span>Nino</span>
+                <strong>&euro;30,00</strong>
+              </article>
+              <article class="payment-row" data-person="Daniele">
+                <time datetime="2026-06-03">03 giu</time>
+                <span class="payer"><span class="payer-avatar">Da</span>Daniele<small>Contanti</small></span>
+                <strong>&euro;25,00</strong>
+              </article>
+              <article class="payment-row" data-person="Fernando">
+                <time datetime="2026-05-29">29 mag</time>
+                <span class="payer"><span class="payer-avatar">Fe</span>Fernando</span>
+                <strong>&euro;40,00</strong>
+              </article>
+              <article class="payment-row" data-person="Fabio">
+                <time datetime="2026-05-25">25 mag</time>
+                <span class="payer"><span class="payer-avatar">Fa</span>Fabio<small>Saldo precedente</small></span>
+                <strong>&euro;45,00</strong>
+              </article>
+              <article class="payment-row" data-person="Nino">
+                <time datetime="2026-05-21">21 mag</time>
+                <span class="payer"><span class="payer-avatar">Ni</span>Nino</span>
+                <strong>&euro;60,00</strong>
+              </article>
+              <article class="payment-row" data-person="Daniele">
+                <time datetime="2026-05-18">18 mag</time>
+                <span class="payer"><span class="payer-avatar">Da</span>Daniele<small>Rimborso parziale</small></span>
+                <strong>&euro;15,00</strong>
+              </article>
+              <article class="payment-row" data-person="Fernando">
+                <time datetime="2026-05-12">12 mag</time>
+                <span class="payer"><span class="payer-avatar">Fe</span>Fernando</span>
+                <strong>&euro;35,00</strong>
+              </article>
+              <article class="payment-row" data-person="Fabio">
+                <time datetime="2026-05-08">08 mag</time>
+                <span class="payer"><span class="payer-avatar">Fa</span>Fabio</span>
+                <strong>&euro;20,00</strong>
+              </article>
+            </div>
+
+            <div class="empty-state" id="empty-state" hidden>
+              <span class="empty-mark" aria-hidden="true">€</span>
+              <h3>Nessun pagamento registrato</h3>
+              <p>Quando Fabio registra il primo pagamento, comparirà qui con data, persona, importo e nota.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
