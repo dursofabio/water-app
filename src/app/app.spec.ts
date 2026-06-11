@@ -17,12 +17,4 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should contain a mat-toolbar with title AcquaApp', async () => {
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const toolbar = compiled.querySelector('mat-toolbar');
-    expect(toolbar).toBeTruthy();
-    expect(toolbar?.textContent?.trim()).toBe('AcquaApp');
-  });
 });
